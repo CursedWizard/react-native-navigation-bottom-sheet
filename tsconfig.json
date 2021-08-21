@@ -12,6 +12,7 @@
     "jsx": "react",
     "lib": ["esnext"],
     "module": "esnext",
+    "outDir": "./lib",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
