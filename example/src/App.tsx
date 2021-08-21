@@ -1,31 +1,53 @@
 import * as React from 'react';
 
-import { StyleSheet, View, Text } from 'react-native';
-import NavigationBottomSheet from 'react-native-navigation-bottom-sheet';
+import Home from "./screens/Home";
+import Practise from "./screens/Practise";
+import News from "./screens/News";
+import Profile from "./screens/Profile";
 
-export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
+Navigation.registerComponent('Practise', () => Practise);
+Navigation.registerComponent('Home', () => Home);
+Navigation.registerComponent('News', () => News);
+Navigation.registerComponent('Profile', () => Profile);
+import { Navigation } from 'react-native-navigation';
 
-  React.useEffect(() => {
-    NavigationBottomSheet.multiply(3, 7).then(setResult);
-  }, []);
+Navigation.events().registerAppLaunchedListener(async () => {
+  Navigation.setRoot({
+    root: {
+      bottomTabs: {
+        id: 'BOTTOM_TABS_LAYOUT',
+        children: [
+          {
+            component: {
+              name: 'Home',
+            },
+          },
 
-  return (
-    <View style={styles.container}>
-      <Text>Result: {result}</Text>
-    </View>
-  );
-}
+          {
+            component: {
+              name: 'Practise',
+            },
+          },
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
-  },
+          {
+            component: {
+              name: 'News',
+            },
+          },
+
+          {
+            component: {
+              name: 'Profile',
+            },
+          },
+        ],
+        options: {
+          bottomTabs: {
+            titleDisplayMode: 'alwaysShow',
+          },
+        },
+      },
+    },
+  });
 });
+
