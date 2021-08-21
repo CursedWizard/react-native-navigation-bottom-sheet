@@ -4,7 +4,6 @@
 /** -------------------------------------------- */
 
 import Animated, { Easing } from "react-native-reanimated";
-import {Dimensions} from "react-native";
 
 const magic = {
   damping: 50,
@@ -38,21 +37,14 @@ const {
   lessThan,
   timing,
   block,
-  not,
-  defined,
-  and,
-  onChange,
   min,
   max,
-  call,
   Value,
   spring,
   clockRunning,
   startClock,
   stopClock,
-  Clock,
   greaterOrEq,
-  eq,
 } = Animated
 
 /**
@@ -200,14 +192,5 @@ export function runSpring(
     set(valueToUpdate, state.position),
     state.position,
   ]);
-}
-
-/**
-* Check if device is in landscape mode
-*/
-function isLandscape() {
-    const dim = Dimensions.get('window');
-
-    return dim.height <= dim.width;
 }
 

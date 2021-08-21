@@ -5,6 +5,8 @@ A performant customizable bottom sheet component made on top of wix react-native
 |      | ![](assets/scrolling_view.gif) | ![](assets/snapping_points.gif) |      |
 | ---- | :----------------------------: | :-----------------------------: | ---- |
 
+To replicate the behavior of the bottom sheet as showcased in gifs above check out the `example/` folder.
+
 ## ![sparkles](https://github.githubassets.com/images/icons/emoji/unicode/2728.png) Current features
 
 * Smooth interactions & snapping animations
@@ -50,18 +52,25 @@ import { RNNBottomSheet } from 'react-native-navigation-bottom-sheet';
 
 RNNBottomSheet.init();
 
-export default class Home extends Component {
-	renderContent = () => {
+export default class App extends Component {
+	renderContent = () => (
     <View
       style={{
         backgroundColor: 'white',
-        padding: 16,
-        height: 450,
+        height: 350,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 16,
       }}
     >
-      <Text>Swipe down to close</Text>
+      <Text>
+        In order to close the modal, you can swipe it down, touch the area outside
+        it or press the back button.
+      </Text>
     </View>
-    }
+  );
+
 
   render() {
     return (
@@ -77,7 +86,7 @@ export default class Home extends Component {
                 renderContent: this.renderContent,
                 snapPoints: [0, '20%', '40%', '70%'],
                 borderRadius: 16,
-                onChange: (index: number) => 			        			console.log("Snapped to " + index),
+                onChange: (index: number) => console.log("Snapped to " + index),
               })
             }
             title="Show modal"
@@ -112,11 +121,11 @@ A wrapper around _Navigation.registerComponent()_ function. Name assigned to the
 
 `openBottomSheet(props)`
 
-A wrapper function around _Navigation.showModal()_, that passes the props along with other options.
+Opens the bottom sheet and snaps it to the point either specified in props or to the top one otherwise. A wrapper function around _Navigation.showModal()_, that passes the props along with other options.
 
 `closeBottomSheet()`
 
-Sends a close command to the bottom sheet.
+Closes the bottom sheet.
 
 `getComponentName()`
 
@@ -128,7 +137,7 @@ Returns a boolean indicating whether the bottom sheet is opened or not.
 
 ## ![bug](https://github.githubassets.com/images/icons/emoji/unicode/1f41b.png)Found a bug?
 
-Don't hesitate to file an issue about any kind of malfunction you experienced while using the component.
+Don't hesitate to file an issue about any kind of malfunction you experienced while using the bottom sheet.
 
 ## ![memo](https://github.githubassets.com/images/icons/emoji/unicode/1f4dd.png) License
 

@@ -82,15 +82,9 @@ export interface RNNBottomSheetProps {
   onChange?: (index: number) => void;
 }
 
-export interface IState {
+export interface State {
   heightOfHeader: number;
   contentHeight: Animated.Value<number>;
-  scrollEnabled: boolean;
-  initialAnimationRunning: boolean;
-  sideMenuOpenValue: any;
-  sideMenuOverlayOpacity: any;
-  sideMenuSwipingStarted: boolean;
-  sideMenuIsDismissing: boolean;
   screenHeight: number;
 }
 

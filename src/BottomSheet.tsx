@@ -16,12 +16,12 @@ import Animated from 'react-native-reanimated';
 import {
   PanGestureHandler,
   TapGestureHandler,
-  State,
+  State as GestureState,
   gestureHandlerRootHOC,
 } from 'react-native-gesture-handler';
 
 import { listen, dispatch } from './events';
-import type { IState, RNNBottomSheetProps } from './types';
+import type { State, RNNBottomSheetProps } from './types';
 import { runSpring, normalizeSnapPoints } from './utility';
 
 const {
@@ -52,7 +52,7 @@ const screenHeight = Dimensions.get('window').height;
 
 type Props = RNNBottomSheetProps & { componentId: any };
 
-class BottomSheet extends React.Component<Props, IState> {
+class BottomSheet extends React.Component<Props, State> {
   static defaultProps: RNNBottomSheetProps = {
     snapPoints: [0, 100, 300, 500],
     backgroundColor: '#FFF',
@@ -63,15 +63,9 @@ class BottomSheet extends React.Component<Props, IState> {
   };
 
   /* BottomSheet state */
-  state: IState = {
+  state: State = {
     heightOfHeader: 0,
     contentHeight: new Animated.Value(0),
-    scrollEnabled: false,
-    initialAnimationRunning: true,
-    sideMenuOpenValue: new Animated.Value(400),
-    sideMenuOverlayOpacity: new Animated.Value(0),
-    sideMenuSwipingStarted: false,
-    sideMenuIsDismissing: false,
     screenHeight: screenHeight,
   };
 
@@ -108,7 +102,7 @@ class BottomSheet extends React.Component<Props, IState> {
   _velocityY: Animated.Value<number> = new Animated.Value(0);
 
   /* State of a gesture */
-  _panState: Animated.Value<number> = new Animated.Value(State.END);
+  _panState: Animated.Value<number> = new Animated.Value(GestureState.END);
 
   /* Position of a last tap */
   _absoluteY: Animated.Value<number> = new Animated.Value(0);
@@ -160,7 +154,7 @@ class BottomSheet extends React.Component<Props, IState> {
   _velocityScrollY: Animated.Value<number> = new Animated.Value(0);
 
   /* State of a gesture for a scroll view */
-  _panScrollState: Animated.Value<number> = new Animated.Value(State.END);
+  _panScrollState: Animated.Value<number> = new Animated.Value(GestureState.END);
 
   _onGestureEventScrolling = Animated.event([
     {
@@ -294,7 +288,6 @@ class BottomSheet extends React.Component<Props, IState> {
     };
 
     const snapPointUpdated = (snapPoint: readonly number[]) => {
-      console.log('Snap point updated: ' + snapPoint);
 
       if (this.props.onChange) {
         for (let i = 0; i < this.snapPoints.length; i++)
@@ -392,12 +385,12 @@ class BottomSheet extends React.Component<Props, IState> {
           ),
         ]
       ),
-      cond(eq(this._panScrollState, State.BEGAN), set(this._velocityY, 0)),
+      cond(eq(this._panScrollState, GestureState.BEGAN), set(this._velocityY, 0)),
       cond(
         or(
-          Animated.eq(this._panScrollState, State.END),
-          Animated.eq(this._panScrollState, State.CANCELLED),
-          Animated.eq(this._panScrollState, State.FAILED)
+          Animated.eq(this._panScrollState, GestureState.END),
+          Animated.eq(this._panScrollState, GestureState.CANCELLED),
+          Animated.eq(this._panScrollState, GestureState.FAILED)
         ),
         [set(this._lastScrollY, resultScroll)],
         [cond(clockRunning(this._clock), __stopClock)]
@@ -422,20 +415,20 @@ class BottomSheet extends React.Component<Props, IState> {
         or(
           and(
             or(
-              Animated.eq(this._panState, State.END),
-              Animated.eq(this._panState, State.CANCELLED),
-              Animated.eq(this._panState, State.FAILED)
+              Animated.eq(this._panState, GestureState.END),
+              Animated.eq(this._panState, GestureState.CANCELLED),
+              Animated.eq(this._panState, GestureState.FAILED)
             ),
             or(
-              Animated.eq(this._panScrollState, State.END),
-              Animated.eq(this._panScrollState, State.CANCELLED),
-              Animated.eq(this._panScrollState, State.FAILED)
+              Animated.eq(this._panScrollState, GestureState.END),
+              Animated.eq(this._panScrollState, GestureState.CANCELLED),
+              Animated.eq(this._panScrollState, GestureState.FAILED)
             )
             // not(eq(add(this._lastBottomSheetHeight, this._dragY), 500)),
           ),
           and(
             greaterThan(this._forcedSet, 0),
-            neq(this._panState, State.ACTIVE)
+            neq(this._panState, GestureState.ACTIVE)
           )
         )
       ),
@@ -657,7 +650,6 @@ class BottomSheet extends React.Component<Props, IState> {
               {/** Scroll view wrapper **/}
               <Animated.View
                 style={{
-                  overflow: 'hidden',
                   width: '100%',
                 }}
               >
@@ -665,7 +657,11 @@ class BottomSheet extends React.Component<Props, IState> {
                   onGestureEvent={this._onGestureEventScrolling}
                   onHandlerStateChange={this._onGestureEventScrolling}
                 >
-                  <Animated.View style={{ height: this.topSnap }}>
+                  <Animated.View
+                    style={{
+                      height: this.topSnap,
+                    }}
+                  >
                     <Animated.View
                       onLayout={this.handleLayoutContent}
                       style={[

@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { Text, View, StyleSheet, Button, TouchableOpacity, Image } from 'react-native';
-import { Navigation, } from 'react-native-navigation';
 import { RNNBottomSheet } from 'react-native-navigation-bottom-sheet';
 import { colors, styles } from "../theme";
 
