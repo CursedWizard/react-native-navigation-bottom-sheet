@@ -1,13 +1,13 @@
-# ![page_with_curl](https://github.githubassets.com/images/icons/emoji/unicode/1f4c3.png) React Native Navigation Bottom Sheet Extension
+#  :page_with_curl: ​React Native Navigation Bottom Sheet Extension
 
 A performant customizable bottom sheet component made on top of wix react-native-navigation library. The component is built using [react-native-gesture-handler](https://github.com/kmagiera/react-native-gesture-handler) and [react-native-reanimated](https://github.com/kmagiera/react-native-reanimated). This solution uses showModal under the hood to display the bottom sheet, so pressing back button will close the component.
 
-|      | ![](assets/scrolling_view.gif) | ![](assets/snapping_points.gif) |      |
-| ---- | :----------------------------: | :-----------------------------: | ---- |
+|      | ![](assets/scrolling_view.gif) |      | ![](assets/snapping_points.gif) |      |
+| ---- | :----------------------------: | ---- | :-----------------------------: | ---- |
 
 To replicate the behavior of the bottom sheet as showcased in gifs above check out the `example/` folder.
 
-## ![sparkles](https://github.githubassets.com/images/icons/emoji/unicode/2728.png) Current features
+## ✨ Features
 
 * Smooth interactions & snapping animations
 * Customizable
@@ -17,29 +17,31 @@ To replicate the behavior of the bottom sheet as showcased in gifs above check o
 
 Note that scroll view does not track velocity of a pan movement yet, so there's just dragging animation. It will be added in the near future though.
 
-## ![package](https://github.githubassets.com/images/icons/emoji/unicode/1f4e6.png)Installation
-
-Run in the terminal following commands.
+## 📦 Installation
 
 If you are using npm:
 
 ```sh
-npm install 
+npm install react-native-navigation-bottom-sheet 
 ```
 
-Firstly install dependecies:
+If you are using yarn:
+
+```sh
+yarn add react-native-navigation-bottom-sheet 
+```
+
+Then you need to install dependecies:
 
 ```sh
 npm install react-native-gesture-handler react-native-reanimated
 ```
 
-If you are using yarn
-
 ```sh
 yarn add react-native-gesture-handler react-native-reanimated
 ```
 
-## ![rocket](https://github.githubassets.com/images/icons/emoji/unicode/1f680.png) Usage
+## 🚀 Usage
 
 You should initialize RNNBottomSheet first by calling init() method.
 
@@ -53,7 +55,7 @@ import { RNNBottomSheet } from 'react-native-navigation-bottom-sheet';
 RNNBottomSheet.init();
 
 export default class App extends Component {
-	renderContent = () => (
+renderContent = () => (
     <View
       style={{
         backgroundColor: 'white',
@@ -97,7 +99,7 @@ export default class App extends Component {
 }
 ```
 
-## ![gear](https://github.githubassets.com/images/icons/emoji/unicode/2699.png) Props
+## ⚙️ Props
 
 |               name               | required |          type           | description                                                  |
 | :------------------------------: | :------: | :---------------------: | ------------------------------------------------------------ |
@@ -113,7 +115,7 @@ export default class App extends Component {
 |             onChange             |    no    | (index: number) => void | Callback when the sheet position changed.                    |
 |              style               |    no    |        StyleProp        | Any valid style properties.                                  |
 
-## ![wrench](https://github.githubassets.com/images/icons/emoji/unicode/1f527.png) Methods
+## :wrench: Methods
 
 `init()`
 
@@ -135,11 +137,11 @@ Returns a name of the component that is used when calling registerComponent() me
 
 Returns a boolean indicating whether the bottom sheet is opened or not.
 
-## ![bug](https://github.githubassets.com/images/icons/emoji/unicode/1f41b.png)Found a bug?
+## :bug: ​Found a bug?
 
 Don't hesitate to file an issue about any kind of malfunction you experienced while using the bottom sheet.
 
-## ![memo](https://github.githubassets.com/images/icons/emoji/unicode/1f4dd.png) License
+## :book: License
 
 MIT
 
