@@ -650,6 +650,7 @@ class BottomSheet extends React.Component<Props, State> {
               {/** Scroll view wrapper **/}
               <Animated.View
                 style={{
+                  overflow: 'hidden',
                   width: '100%',
                 }}
               >
