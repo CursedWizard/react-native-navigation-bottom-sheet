@@ -34,11 +34,11 @@ yarn add react-native-navigation-bottom-sheet
 Then you need to install dependecies:
 
 ```sh
-npm install react-native-gesture-handler react-native-reanimated
+npm install react-native-gesture-handler react-native-reanimated@1.13.2
 ```
 
 ```sh
-yarn add react-native-gesture-handler react-native-reanimated
+yarn add react-native-gesture-handler react-native-reanimated@1.13.2
 ```
 
 ## 🚀 Usage
