@@ -15,6 +15,7 @@
     "react-native": "0.63.4",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-navigation": "^7.18.1",
+    "react-native-paper": "^4.9.2",
     "react-native-reanimated": "^1.13.2"
   },
   "devDependencies": {
@@ -23,7 +24,7 @@
     "@types/react": "^17.0.0",
     "@types/react-native": "^0.63.37",
     "babel-plugin-module-resolver": "^4.0.0",
-    "typescript": "^3.8.3",
-    "metro-react-native-babel-preset": "^0.64.0"
+    "metro-react-native-babel-preset": "^0.64.0",
+    "typescript": "^3.8.3"
   }
 }

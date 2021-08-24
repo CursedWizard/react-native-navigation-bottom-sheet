@@ -1,6 +1,6 @@
 {
   "name": "react-native-navigation-bottom-sheet",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A performant customizable bottom sheet component made on top of wix react-native-navigation library.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -14,7 +14,7 @@
   "scripts": {
     "typescript": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
-    "build": "bob build",
+    "build": "bob build && copy-dts",
     "copy-dts": "copyfiles -u 1 \"src/**/*.d.ts\" lib/typescript",
     "release": "release-it",
     "watch-need-help": "echo 256 | sudo tee -a /proc/sys/fs/inotify/max_user_instances && echo 32768 | sudo tee -a /proc/sys/fs/inotify/max_queued_events && echo 65536 | sudo tee -a /proc/sys/fs/inotify/max_user_watches && watchman shutdown-server",

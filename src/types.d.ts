@@ -80,6 +80,8 @@ export interface RNNBottomSheetProps {
    * @type (index: number) => void;
    */
   onChange?: (index: number) => void;
+
+  scrollableObjects?: any[];
 }
 
 export interface State {

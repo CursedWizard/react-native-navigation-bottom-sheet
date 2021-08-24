@@ -217,7 +217,7 @@ class BottomSheet extends React.Component<Props, State> {
         this.snapPoints[this.snapPoints.length - 1]
       : 0;
 
-    // console.log(this.topSnap - this.state.heightOfHeader);
+    // console.log(height);
     this.state.contentHeight.setValue(Math.max(resultHeight, 0));
   };
 
@@ -652,11 +652,15 @@ class BottomSheet extends React.Component<Props, State> {
                 style={{
                   overflow: 'hidden',
                   width: '100%',
+                  borderTopLeftRadius: this.props.borderRadius,
+                  borderTopRightRadius: this.props.borderRadius,
                 }}
               >
                 <PanGestureHandler
                   onGestureEvent={this._onGestureEventScrolling}
                   onHandlerStateChange={this._onGestureEventScrolling}
+                  // waitFor={this.props.scrollableObjects ? this.props.scrollableObjects[0] : null}
+                  simultaneousHandlers={this.props.scrollableObjects ? this.props.scrollableObjects[0] : null}
                 >
                   <Animated.View
                     style={{
