@@ -137,9 +137,22 @@ Returns a name of the component that is used when calling registerComponent() me
 
 Returns a boolean indicating whether the bottom sheet is opened or not.
 
-## :bug: ​Found a bug?
+## :clipboard: Todo
 
-Don't hesitate to file an issue about any kind of malfunction you experienced while using the bottom sheet.
+The project is still in development and here's a list of features / fixes i am planning to address:
+
+- [ ] add decay animation for scrolling
+- [ ] add support for FlatList and SectionList (wrapper around these functions)
+- [ ] add more options for customization
+- [ ] add an option to dynamically change opacity of the bottom sheet
+- [ ] add dedicated support for horizontal scrolling inside the bottom sheet
+- [ ] explore new ways to optimize animations and loading of the bottom sheet
+
+Feel free to suggest your own ideas.
+
+## :bug: ​Something doesn't work?
+
+Don't hesitate to file an issue about any kind of malfunction you experienced. You can also DM me by my email imaginary.loyalist@gmail.com
 
 ## :book: License
 
