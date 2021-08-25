@@ -27,13 +27,15 @@ export default class RNNBottomSheet {
 
   static init() {
     if (!this.registered) {
+      console.log("Registering bottomSheet")
       Navigation.registerComponent(this.bottomSheetName, () => BottomSheet);
       this.registered = true;
+
+      listen('MARK_CLOSED', () => {
+        this.modalOpened = false;
+      });
     }
 
-    listen('MARK_CLOSED', () => {
-      this.modalOpened = false;
-    });
   }
 
   /**

@@ -23,6 +23,7 @@ import {
 import { listen, dispatch } from './events';
 import type { State, RNNBottomSheetProps } from './types';
 import { runSpring, normalizeSnapPoints } from './utility';
+import animated_scroll_store from "./animatedStore";
 
 const {
   call,
@@ -217,7 +218,7 @@ class BottomSheet extends React.Component<Props, State> {
         this.snapPoints[this.snapPoints.length - 1]
       : 0;
 
-    // console.log(height);
+    console.log(height + this.state.heightOfHeader - this.snapPoints[this.snapPoints.length - 1]);
     this.state.contentHeight.setValue(Math.max(resultHeight, 0));
   };
 
@@ -232,6 +233,9 @@ class BottomSheet extends React.Component<Props, State> {
     for (let i = 0; i < this.snapPoints.length; i++) {
       this._snapPoints.push(new Animated.Value(this.snapPoints[i]));
     }
+
+    animated_scroll_store.init(this.props.enabledContentGestureInteraction ?? true, this.snapPoints);
+    // animated_scroll_store._wasStarted.setValue(1);
 
     const distance = Animated.proc(
       (
@@ -298,6 +302,7 @@ class BottomSheet extends React.Component<Props, State> {
       }
 
       if (snapPoint[0] === 0) this.closeBottomSheet();
+
     };
 
     const curScroll: Animated.Value<number> = new Animated.Value(0);
@@ -590,8 +595,17 @@ class BottomSheet extends React.Component<Props, State> {
 
     this.snapTo(screenHeight - this.snapPoints[0]);
 
+
     dispatch('MARK_CLOSED');
-    setTimeout(() => Navigation.dismissModal(this.props.componentId), 250);
+    setTimeout(() => {
+      animated_scroll_store._scrollY.setValue(0);
+      animated_scroll_store._velocityScrollY.setValue(0);
+      animated_scroll_store._panScrollState.setValue(0);
+      animated_scroll_store._prevTransY.setValue(0);
+      animated_scroll_store._transY.setValue(0);
+      animated_scroll_store._wasStarted.setValue(1);
+      Navigation.dismissModal(this.props.componentId);
+    }, 250);
     // setTimeout(() => Navigation.dismissOverlay(this.props.componentId), 250);
   };
 
@@ -639,7 +653,7 @@ class BottomSheet extends React.Component<Props, State> {
               >
                 {/** Header wrapper **/}
                 <Animated.View
-                  onLayout={this.handleLayoutHeader}
+                  onLayout={animated_scroll_store.handleLayoutHeader}
                   style={{
                     zIndex: 101,
                   }}
@@ -657,10 +671,10 @@ class BottomSheet extends React.Component<Props, State> {
                 }}
               >
                 <PanGestureHandler
-                  onGestureEvent={this._onGestureEventScrolling}
-                  onHandlerStateChange={this._onGestureEventScrolling}
+                  onGestureEvent={animated_scroll_store._onGestureEventScrolling}
+                  onHandlerStateChange={animated_scroll_store._onGestureEventScrolling}
                   // waitFor={this.props.scrollableObjects ? this.props.scrollableObjects[0] : null}
-                  simultaneousHandlers={this.props.scrollableObjects ? this.props.scrollableObjects[0] : null}
+                  // simultaneousHandlers={this.props.scrollableObjects ? this.props.scrollableObjects[0] : null}
                 >
                   <Animated.View
                     style={{
@@ -668,12 +682,12 @@ class BottomSheet extends React.Component<Props, State> {
                     }}
                   >
                     <Animated.View
-                      onLayout={this.handleLayoutContent}
+                      onLayout={animated_scroll_store.handleLayoutContent}
                       style={[
                         {
                           transform: [
                             {
-                              translateY: this._masterScrollY,
+                              translateY: animated_scroll_store._masterScrollY,
                             },
                           ],
                         },

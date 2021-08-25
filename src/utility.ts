@@ -65,7 +65,8 @@ export function runDecay(
   value: Animated.Node<number>,
   velocity: Animated.Node<number>,
   positionToUpdate: any,
-  wasStartedFromBegin: Animated.Value<number>,
+  wasStarted: Animated.Value<number>,
+  contentHeight: Animated.Value<number>
 ) {
   const state = {
     finished: new Value(0),
@@ -76,8 +77,9 @@ export function runDecay(
 
   const config = { deceleration: magic.deceleration }
 
-  const resultScroll = max(min(state.position, -1), multiply(2992, -1));
+  const resultScroll = max(min(state.position, -1), multiply(contentHeight, -1));
   return block([
+    // cond(wasStarted, [stopClock(clock), set(wasStarted, 0)]),
     cond(clockRunning(clock), 0, [
       set(state.finished, 0),
       set(state.velocity, multiply(velocity, magic.velocityFactor)),
@@ -86,13 +88,14 @@ export function runDecay(
       startClock(clock),
     ]),
     cond(greaterOrEq(resultScroll, 0), [set(state.finished, 1), stopClock(clock)]),
-    cond(lessThan(resultScroll, multiply(2000, -1)), [set(state.finished, 1), stopClock(clock)]),
+    cond(lessThan(resultScroll, multiply(contentHeight, -1)), [set(state.finished, 1), stopClock(clock)]),
     cond(clockRunning(clock), [
       // positionToUpdate(state.position),
-      set(positionToUpdate, resultScroll),
+      cond(state.finished, 0, set(positionToUpdate, resultScroll)),
+      cond(wasStarted, set(positionToUpdate, 0)),
       decay(clock, state, config),
     ]),
-    cond(state.finished, [set(wasStartedFromBegin, 0), stopClock(clock)]),
+    cond(state.finished, [stopClock(clock)]),
     resultScroll,
   ]);
 }
