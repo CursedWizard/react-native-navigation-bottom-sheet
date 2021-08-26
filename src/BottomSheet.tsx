@@ -23,7 +23,7 @@ import {
 import { listen, dispatch } from './events';
 import type { State, RNNBottomSheetProps } from './types';
 import { runSpring, normalizeSnapPoints } from './utility';
-import { AnimatedStoreScrolling as ASS } from "./animatedStore";
+import { AnimatedStoreScrolling as ASS } from "./AnimatedStoreScrolling";
 // import { AnimatedStoreSheet as ASBS } from "./animatedStoreSheet";
 import { MasterStore as ASBS } from './masterStore';
 
@@ -247,10 +247,11 @@ class BottomSheet extends React.Component<Props, State> {
       ) => Animated.abs(Animated.sub(bottomPoint, upperPoint))
     );
 
+    const actualVelocity = cond(eq(ASS._lastState, 2), add(ASS._velocityScrollY, this._velocityY), this._velocityY);
     const currentPoint = Animated.sub(
       this._lastBottomSheetHeight,
       add(this._dragY, ASBS._scrollToDragVal),
-      Animated.multiply(0.25, this._velocityY)
+      Animated.multiply(0.25, actualVelocity)
     ) as Animated.Value<number>;
 
     const rememberAndReturn = Animated.proc((value: Animated.Node<number>) =>
@@ -327,11 +328,17 @@ class BottomSheet extends React.Component<Props, State> {
         set(storedResult, func),
         set(isRun, 1),
         set(this._dragY, 0),
-        set(this._velocityY, 0),
+        cond(
+          eq(ASS._lastState, 2),
+          set(this._velocityY, 0),
+          // set(ASS._velocityScrollY, 0),
+        ),
+          // set(ASS._velocityScrollY, 0),
+          // set(this._velocityY, 0),
         set(this._lastScrollY, resultScroll),
         set(this._scrollY, 0),
         set(ASBS._scrollToDragVal, 0),
-        set(this._velocityScrollY, 0),
+        // set(ASS._velocityScrollY, 0),
         storedResult,
       ]);
     };
@@ -350,63 +357,12 @@ class BottomSheet extends React.Component<Props, State> {
     const __stopClock = block([
       set(this._lastBottomSheetHeight, sub(screenHeight, currentMovingPoint)),
       updateWhenFinished,
-      set(this._velocityScrollY, 0),
+      // set(ASS._velocityScrollY, 0),
       set(this._velocityY, 0),
+      set(ASS._velocityScrollY, 0),
       set(isRun, 0),
       Animated.stopClock(this._clock),
     ]);
-
-    this._masterScrollY = block([
-      cond(
-        lessThan(
-          sub(
-            this._snapPoints[this._snapPoints.length - 1],
-            this._lastBottomSheetHeight
-          ),
-          10
-        ),
-        // if the bottom sheet is snapped to the very top
-        [
-          set(
-            ASBS._scrollToDragVal,
-            max(add(this._scrollY, this._lastScrollY), 0)
-          ),
-          set(curScroll, this._scrollY),
-          cond(
-            greaterThan(add(this._scrollY, this._lastScrollY), -1),
-            set(this._velocityY, this._velocityScrollY)
-          ),
-        ],
-        [
-          set(this._velocityY, this._velocityScrollY),
-          set(ASBS._scrollToDragVal, this._scrollY),
-          set(
-            curScroll,
-            min(
-              add(
-                sub(
-                  this._snapPoints[this._snapPoints.length - 1],
-                  this._lastBottomSheetHeight
-                ),
-                this._scrollY
-              ),
-              0
-            )
-          ),
-        ]
-      ),
-      cond(eq(this._panScrollState, GestureState.BEGAN), set(this._velocityY, 0)),
-      cond(
-        or(
-          Animated.eq(this._panScrollState, GestureState.END),
-          Animated.eq(this._panScrollState, GestureState.CANCELLED),
-          Animated.eq(this._panScrollState, GestureState.FAILED)
-        ),
-        [set(this._lastScrollY, resultScroll)],
-        [cond(clockRunning(this._clock), __stopClock)]
-      ),
-      resultScroll,
-    ]) as Animated.Value<number>;
 
     const runSpringAnimation: Animated.Value<number> = new Animated.Value(0);
 
@@ -416,17 +372,17 @@ class BottomSheet extends React.Component<Props, State> {
         call([this._lastBottomSheetHeight], snapPointUpdated)
       ),
       // onChange(
-      //   this._scrollToDragVal,
-      //   call([this._scrollToDragVal], (val: any) => generalDebug(val ,"ScrollTodrag: ")),
+      //   this._velocityY,
+      //   call([this._velocityY], (val: any) => generalDebug(val ,"Velocity: ")),
       // ),
 
       cond(
         lessThan(
           sub(
             this._snapPoints[this._snapPoints.length - 1],
-            add(this._lastBottomSheetHeight, ASBS._scrollToDragVal, this._dragY)
+            sub(this._lastBottomSheetHeight, ASBS._scrollToDragVal, this._dragY)
           ),
-          10
+          1
         ),
         set(ASBS._snappedToTop, 1),
         set(ASBS._snappedToTop, 0)
@@ -476,13 +432,14 @@ class BottomSheet extends React.Component<Props, State> {
                 runOnce(getClosestSnapPoint() as Animated.Value<number>)
               )
             ),
-            this._velocityY,
+            actualVelocity as Animated.Value<number>,
             updateWhenFinished,
             isRun,
             currentMovingPoint
           ),
         ],
         [
+          set(ASS._lastState, 2),
           cond(Animated.clockRunning(this._clock), __stopClock),
           // Animated.stopClock(this.clock),
           this._draggingAnimation,
@@ -614,9 +571,10 @@ class BottomSheet extends React.Component<Props, State> {
 
     dispatch('MARK_CLOSED');
     setTimeout(() => {
+      ASBS._scrollToDragVal.setValue(0);
+      ASS._panScrollState.setValue(5);
       ASS._scrollY.setValue(0);
       ASS._velocityScrollY.setValue(0);
-      ASS._panScrollState.setValue(0);
       ASS._prevTransY.setValue(0);
       ASS._transY.setValue(0);
       ASS._wasStarted.setValue(1);

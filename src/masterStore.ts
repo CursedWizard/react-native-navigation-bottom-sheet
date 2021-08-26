@@ -38,7 +38,7 @@ const {
 
 const screenHeight = Dimensions.get('window').height;
 
-import { AnimatedStoreScrolling as ASS } from "./animatedStore";
+import { AnimatedStoreScrolling as ASS } from "./AnimatedStoreScrolling";
 import { AnimatedStoreSheet as ASBS } from "./animatedStoreSheet";
 
 class MasterStore {

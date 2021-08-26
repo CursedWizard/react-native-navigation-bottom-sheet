@@ -109,53 +109,95 @@ class AnimatedStoreScrolling {
   static _prevTransY: Animated.Value<number> = new Animated.Value(0);
   static _transY: Animated.Value<number> = new Animated.Value(0);
 
+  /**
+   * 1 - scrolling content
+   * 2 - sheet dragging
+   */
+  static _lastState: Animated.Value<number> = new Animated.Value(0);
+  static scrollOffset: Animated.Value<number> = new Animated.Value(0);
+  static scrollOffsetWhileSnapped: Animated.Value<number> = new Animated.Value(
+    0
+  );
+
   static _masterScrollY = block([
     // cond(this._wasStarted, [stopClock(this._scrollingClock), set(this._wasStarted, 0)]),
     /* onChange(
-      this._transY,
-      call([this._velocityScrollY], (snapPoints: readonly number[]) =>
+      ASBS._snappedToTop,
+      call([ASBS._snappedToTop], (snapPoints: readonly number[]) =>
         console.log('Changed: ' + snapPoints[0])
       )
     ), */
-    cond(not(ASBS._snappedToTop), set(ASBS._scrollToDragVal, this._scrollY)),
-    cond(
-      and(ASBS._snappedToTop, eq(this._transY, 0)),
-      set(ASBS._scrollToDragVal, max(add(this._scrollY, this._prevTransY), 0))
-      // set(ASBS._scrollToDragVal, this._scrollY)
+    onChange(
+      this._lastState,
+      call([this._lastState], (snapPoints: readonly number[]) =>
+        console.log('Changed state: ' + snapPoints[0])
+      )
     ),
 
-      cond(
-        or(
-          eq(this._panScrollState, GestureState.ACTIVE),
-          eq(this._panScrollState, GestureState.BEGAN)
+    /* cond(and(ASBS._snappedToTop, lessThan(this._transY, 0)), [
+      set(this.scrollOffsetWhileSnapped, this._scrollY),
+    ]), */
+    /* cond(not(ASBS._snappedToTop), [
+      set(ASBS._scrollToDragVal, sub(this._scrollY, this.scrollOffsetWhileSnapped)),
+      // set(this.scrollOffset, this._scrollY),
+    ]),
+    cond(and(ASBS._snappedToTop, eq(this._transY, 0)), [
+      set(ASBS._scrollToDragVal, max(add(this._scrollY, this._prevTransY), 0)),
+      // set(this.scrollOffsetWhileSnapped, this._scrollY),
+    ]), */
+    cond(eq(this._transY, 0), [
+      // set(ASBS._scrollToDragVal, max(add(this._scrollY, this._prevTransY), 0)),
+      // set(ASBS._velocityY, this._velocityScrollY)
+      // set(this.scrollOffsetWhileSnapped, this._scrollY),
+    ]),
+
+    cond(
+      greaterThan(this._transY, -1),
+      [set(this._lastState, 2)],
+      [
+        cond(
+          ASBS._snappedToTop,
+          set(this._lastState, 1),
+          set(this._lastState, 2)
         ),
-        [
-          set(this._wasStarted, 0),
-          stopClock(this._scrollingClock),
-          set(
-            this._transY,
-            this.limitedScroll(
-              add(this._scrollY, this._prevTransY) as Animated.Value<number>
-            )
-          ),
+      ]
+    ),
+    cond(
+      or(
+        eq(this._panScrollState, GestureState.ACTIVE),
+        eq(this._panScrollState, GestureState.BEGAN)
+      ),
+      [
+        set(this._wasStarted, 0),
+        stopClock(this._scrollingClock),
+        set(
           this._transY,
-        ],
-        [
-          set(ASBS._scrollToDragVal, 0),
-          runDecay(
-            this._scrollingClock,
-            this._transY,
-            this._velocityScrollY,
-            this._transY,
-            this._wasStarted,
-            this.contentHeight
-          ),
-          set(this._prevTransY, this._transY),
+          this.limitedScroll(
+            add(
+              this._scrollY,
+              this._prevTransY
+              // multiply(-1, this.scrollOffset)
+            ) as Animated.Value<number>
+          )
+        ),
+        this._transY,
+      ],
+      [
+        set(this.scrollOffset, 0),
+        set(ASBS._scrollToDragVal, 0),
+        runDecay(
+          this._scrollingClock,
           this._transY,
-        ]
-      )
-    // cond(not(ASBS._snappedToTop), this._prevTransY, this._transY),
-    // this._transY,
+          this._velocityScrollY,
+          this._transY,
+          this._wasStarted,
+          this.contentHeight
+        ),
+        set(this._velocityScrollY, 0),
+        set(this._prevTransY, this._transY),
+        this._transY,
+      ]
+    ),
   ]);
 }
 
