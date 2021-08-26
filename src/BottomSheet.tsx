@@ -23,7 +23,9 @@ import {
 import { listen, dispatch } from './events';
 import type { State, RNNBottomSheetProps } from './types';
 import { runSpring, normalizeSnapPoints } from './utility';
-import animated_scroll_store from "./animatedStore";
+import { AnimatedStoreScrolling as ASS } from "./animatedStore";
+// import { AnimatedStoreSheet as ASBS } from "./animatedStoreSheet";
+import { MasterStore as ASBS } from './masterStore';
 
 const {
   call,
@@ -176,7 +178,7 @@ class BottomSheet extends React.Component<Props, State> {
   _draggingAnimation = Animated.interpolate(
     Animated.add(
       Animated.sub(screenHeight, this._lastBottomSheetHeight),
-      add(this._dragY, this._scrollToDragVal)
+      add(this._dragY, ASBS._scrollToDragVal)
     ),
     {
       inputRange: [
@@ -234,7 +236,8 @@ class BottomSheet extends React.Component<Props, State> {
       this._snapPoints.push(new Animated.Value(this.snapPoints[i]));
     }
 
-    animated_scroll_store.init(this.props.enabledContentGestureInteraction ?? true, this.snapPoints);
+    ASS.init(this.props.enabledContentGestureInteraction ?? true, this.snapPoints);
+
     // animated_scroll_store._wasStarted.setValue(1);
 
     const distance = Animated.proc(
@@ -246,7 +249,7 @@ class BottomSheet extends React.Component<Props, State> {
 
     const currentPoint = Animated.sub(
       this._lastBottomSheetHeight,
-      add(this._dragY, this._scrollToDragVal),
+      add(this._dragY, ASBS._scrollToDragVal),
       Animated.multiply(0.25, this._velocityY)
     ) as Animated.Value<number>;
 
@@ -305,6 +308,8 @@ class BottomSheet extends React.Component<Props, State> {
 
     };
 
+    // MS.init(snapPointUpdated);
+
     const curScroll: Animated.Value<number> = new Animated.Value(0);
     const resultScroll = max(
       min(add(this._lastScrollY, curScroll), 0),
@@ -325,7 +330,7 @@ class BottomSheet extends React.Component<Props, State> {
         set(this._velocityY, 0),
         set(this._lastScrollY, resultScroll),
         set(this._scrollY, 0),
-        set(this._scrollToDragVal, 0),
+        set(ASBS._scrollToDragVal, 0),
         set(this._velocityScrollY, 0),
         storedResult,
       ]);
@@ -363,7 +368,7 @@ class BottomSheet extends React.Component<Props, State> {
         // if the bottom sheet is snapped to the very top
         [
           set(
-            this._scrollToDragVal,
+            ASBS._scrollToDragVal,
             max(add(this._scrollY, this._lastScrollY), 0)
           ),
           set(curScroll, this._scrollY),
@@ -374,7 +379,7 @@ class BottomSheet extends React.Component<Props, State> {
         ],
         [
           set(this._velocityY, this._velocityScrollY),
-          set(this._scrollToDragVal, this._scrollY),
+          set(ASBS._scrollToDragVal, this._scrollY),
           set(
             curScroll,
             min(
@@ -415,6 +420,17 @@ class BottomSheet extends React.Component<Props, State> {
       //   call([this._scrollToDragVal], (val: any) => generalDebug(val ,"ScrollTodrag: ")),
       // ),
 
+      cond(
+        lessThan(
+          sub(
+            this._snapPoints[this._snapPoints.length - 1],
+            add(this._lastBottomSheetHeight, ASBS._scrollToDragVal, this._dragY)
+          ),
+          10
+        ),
+        set(ASBS._snappedToTop, 1),
+        set(ASBS._snappedToTop, 0)
+      ),
       set(
         runSpringAnimation,
         or(
@@ -425,9 +441,9 @@ class BottomSheet extends React.Component<Props, State> {
               Animated.eq(this._panState, GestureState.FAILED)
             ),
             or(
-              Animated.eq(this._panScrollState, GestureState.END),
-              Animated.eq(this._panScrollState, GestureState.CANCELLED),
-              Animated.eq(this._panScrollState, GestureState.FAILED)
+              Animated.eq(ASS._panScrollState, GestureState.END),
+              Animated.eq(ASS._panScrollState, GestureState.CANCELLED),
+              Animated.eq(ASS._panScrollState, GestureState.FAILED)
             )
             // not(eq(add(this._lastBottomSheetHeight, this._dragY), 500)),
           ),
@@ -448,7 +464,7 @@ class BottomSheet extends React.Component<Props, State> {
                 this._startSnapPoint,
                 add(
                   sub(screenHeight, this._lastBottomSheetHeight),
-                  add(this._dragY, this._scrollToDragVal)
+                  add(this._dragY, ASBS._scrollToDragVal)
                 )
               )
             ) as Animated.Value<number>,
@@ -598,12 +614,12 @@ class BottomSheet extends React.Component<Props, State> {
 
     dispatch('MARK_CLOSED');
     setTimeout(() => {
-      animated_scroll_store._scrollY.setValue(0);
-      animated_scroll_store._velocityScrollY.setValue(0);
-      animated_scroll_store._panScrollState.setValue(0);
-      animated_scroll_store._prevTransY.setValue(0);
-      animated_scroll_store._transY.setValue(0);
-      animated_scroll_store._wasStarted.setValue(1);
+      ASS._scrollY.setValue(0);
+      ASS._velocityScrollY.setValue(0);
+      ASS._panScrollState.setValue(0);
+      ASS._prevTransY.setValue(0);
+      ASS._transY.setValue(0);
+      ASS._wasStarted.setValue(1);
       Navigation.dismissModal(this.props.componentId);
     }, 250);
     // setTimeout(() => Navigation.dismissOverlay(this.props.componentId), 250);
@@ -653,7 +669,7 @@ class BottomSheet extends React.Component<Props, State> {
               >
                 {/** Header wrapper **/}
                 <Animated.View
-                  onLayout={animated_scroll_store.handleLayoutHeader}
+                  onLayout={ASS.handleLayoutHeader}
                   style={{
                     zIndex: 101,
                   }}
@@ -671,8 +687,8 @@ class BottomSheet extends React.Component<Props, State> {
                 }}
               >
                 <PanGestureHandler
-                  onGestureEvent={animated_scroll_store._onGestureEventScrolling}
-                  onHandlerStateChange={animated_scroll_store._onGestureEventScrolling}
+                  onGestureEvent={ASS._onGestureEventScrolling}
+                  onHandlerStateChange={ASS._onGestureEventScrolling}
                   // waitFor={this.props.scrollableObjects ? this.props.scrollableObjects[0] : null}
                   // simultaneousHandlers={this.props.scrollableObjects ? this.props.scrollableObjects[0] : null}
                 >
@@ -682,12 +698,12 @@ class BottomSheet extends React.Component<Props, State> {
                     }}
                   >
                     <Animated.View
-                      onLayout={animated_scroll_store.handleLayoutContent}
+                      onLayout={ASS.handleLayoutContent}
                       style={[
                         {
                           transform: [
                             {
-                              translateY: animated_scroll_store._masterScrollY,
+                              translateY: ASS._masterScrollY,
                             },
                           ],
                         },

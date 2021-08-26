@@ -34,7 +34,12 @@ const {
   Value
 } = Animated;
 
-class AnimatedStore {
+import { MasterStore as ASBS } from "./masterStore";
+
+/**
+  * Namespace for animated values associated with the scrolling content.
+  */
+class AnimatedStoreScrolling {
   /* Clock used for an animation of a scrolling view (not implemented yet) */
   static _scrollingClock = new Animated.Clock();
 
@@ -72,7 +77,7 @@ class AnimatedStore {
   ) => {
     this.snapPoints = snapPoints;
     this.enabledContentGestureInteraction = enabledContentGestureInteraction;
-  }
+  };
 
   static handleLayoutHeader = ({
     nativeEvent: {
@@ -112,36 +117,45 @@ class AnimatedStore {
         console.log('Changed: ' + snapPoints[0])
       )
     ), */
-
+    cond(not(ASBS._snappedToTop), set(ASBS._scrollToDragVal, this._scrollY)),
     cond(
-      or(
-        eq(this._panScrollState, GestureState.ACTIVE),
-        eq(this._panScrollState, GestureState.BEGAN)
-      ),
-      [
-        set(this._wasStarted, 0),
-        stopClock(this._scrollingClock),
-        set(
-          this._transY,
-          this.limitedScroll(
-            add(this._scrollY, this._prevTransY) as Animated.Value<number>
-          )
-        ),
-        this._transY,
-      ],
-      [
-        runDecay(
-          this._scrollingClock,
-          this._transY,
-          this._velocityScrollY,
-          this._transY,
-          this._wasStarted,
-          this.contentHeight
-        ),
-        set(this._prevTransY, this._transY),
-        this._transY,
-      ]
+      and(ASBS._snappedToTop, eq(this._transY, 0)),
+      set(ASBS._scrollToDragVal, max(add(this._scrollY, this._prevTransY), 0))
+      // set(ASBS._scrollToDragVal, this._scrollY)
     ),
+
+      cond(
+        or(
+          eq(this._panScrollState, GestureState.ACTIVE),
+          eq(this._panScrollState, GestureState.BEGAN)
+        ),
+        [
+          set(this._wasStarted, 0),
+          stopClock(this._scrollingClock),
+          set(
+            this._transY,
+            this.limitedScroll(
+              add(this._scrollY, this._prevTransY) as Animated.Value<number>
+            )
+          ),
+          this._transY,
+        ],
+        [
+          set(ASBS._scrollToDragVal, 0),
+          runDecay(
+            this._scrollingClock,
+            this._transY,
+            this._velocityScrollY,
+            this._transY,
+            this._wasStarted,
+            this.contentHeight
+          ),
+          set(this._prevTransY, this._transY),
+          this._transY,
+        ]
+      )
+    // cond(not(ASBS._snappedToTop), this._prevTransY, this._transY),
+    // this._transY,
   ]);
 }
 
@@ -149,5 +163,5 @@ class AnimatedStore {
 
 export default animated_scroll_store; */
 
-export default AnimatedStore;
+export { AnimatedStoreScrolling };
 
