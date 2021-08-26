@@ -247,7 +247,7 @@ class BottomSheet extends React.Component<Props, State> {
       ) => Animated.abs(Animated.sub(bottomPoint, upperPoint))
     );
 
-    const actualVelocity = cond(eq(ASS._lastState, 2), add(ASS._velocityScrollY, this._velocityY), this._velocityY);
+    const actualVelocity = cond(eq(ASS._lastState, 2), add(ASBS._velocityY, this._velocityY), this._velocityY);
     const currentPoint = Animated.sub(
       this._lastBottomSheetHeight,
       add(this._dragY, ASBS._scrollToDragVal),
@@ -331,14 +331,11 @@ class BottomSheet extends React.Component<Props, State> {
         cond(
           eq(ASS._lastState, 2),
           set(this._velocityY, 0),
-          // set(ASS._velocityScrollY, 0),
         ),
-          // set(ASS._velocityScrollY, 0),
-          // set(this._velocityY, 0),
         set(this._lastScrollY, resultScroll),
         set(this._scrollY, 0),
         set(ASBS._scrollToDragVal, 0),
-        // set(ASS._velocityScrollY, 0),
+        set(ASBS._velocityY, 0),
         storedResult,
       ]);
     };
@@ -371,6 +368,13 @@ class BottomSheet extends React.Component<Props, State> {
         this._lastBottomSheetHeight,
         call([this._lastBottomSheetHeight], snapPointUpdated)
       ),
+      // onChange(
+      //   ASBS._scrollToDragVal,
+      //   call([ASBS._scrollToDragVal], (snapPoints: readonly number[]) =>
+      //     console.log('Changed scrollToDrag: ' + snapPoints[0])
+      //   )
+      // ),
+
       // onChange(
       //   this._velocityY,
       //   call([this._velocityY], (val: any) => generalDebug(val ,"Velocity: ")),
@@ -409,6 +413,27 @@ class BottomSheet extends React.Component<Props, State> {
           )
         )
       ),
+      cond(ASBS._snappedToTop, set(ASS._lastState, 1)),
+      cond(
+        greaterThan(ASS._transY, -2),
+        cond(greaterThan(ASS._scrollY, 0), [set(ASS._lastState, 2)]),
+        [
+          cond(
+            ASBS._snappedToTop,
+            set(ASS._lastState, 1),
+            set(ASS._lastState, 2)
+          ),
+        ]
+      ),
+
+      cond(
+        or(
+          eq(this._panState, GestureState.ACTIVE),
+          eq(this._panState, GestureState.BEGAN)
+        ),
+        set(ASS._lastState, 2)
+      ),
+
       Animated.cond(
         runSpringAnimation,
         [
@@ -439,7 +464,6 @@ class BottomSheet extends React.Component<Props, State> {
           ),
         ],
         [
-          set(ASS._lastState, 2),
           cond(Animated.clockRunning(this._clock), __stopClock),
           // Animated.stopClock(this.clock),
           this._draggingAnimation,

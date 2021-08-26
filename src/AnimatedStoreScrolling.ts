@@ -128,6 +128,12 @@ class AnimatedStoreScrolling {
       )
     ), */
     onChange(
+      this.scrollOffsetWhileSnapped,
+      call([this.scrollOffsetWhileSnapped], (snapPoints: readonly number[]) =>
+        console.log('Changed offsetWhileSnapped: ' + snapPoints[0])
+      )
+    ),
+    onChange(
       this._lastState,
       call([this._lastState], (snapPoints: readonly number[]) =>
         console.log('Changed state: ' + snapPoints[0])
@@ -145,23 +151,20 @@ class AnimatedStoreScrolling {
       set(ASBS._scrollToDragVal, max(add(this._scrollY, this._prevTransY), 0)),
       // set(this.scrollOffsetWhileSnapped, this._scrollY),
     ]), */
-    cond(eq(this._transY, 0), [
-      // set(ASBS._scrollToDragVal, max(add(this._scrollY, this._prevTransY), 0)),
-      // set(ASBS._velocityY, this._velocityScrollY)
+    cond(eq(this._lastState, 2), [
+      /* set(this.scrollOffset, add(this._scrollY, this.scrollOffsetWhileSnapped)),
+      set(ASBS._scrollToDragVal, add(this._scrollY, this.scrollOffsetWhileSnapped)), */
+
+      set(this.scrollOffset, this._scrollY),
+      set(ASBS._scrollToDragVal, this._scrollY),
+      set(ASBS._velocityY, this._velocityScrollY)
       // set(this.scrollOffsetWhileSnapped, this._scrollY),
     ]),
 
-    cond(
-      greaterThan(this._transY, -1),
-      [set(this._lastState, 2)],
-      [
-        cond(
-          ASBS._snappedToTop,
-          set(this._lastState, 1),
-          set(this._lastState, 2)
-        ),
-      ]
-    ),
+    cond(eq(this._lastState, 1), [
+      set(this.scrollOffsetWhileSnapped, min(this._scrollY, this.scrollOffsetWhileSnapped)),
+    ]),
+
     cond(
       or(
         eq(this._panScrollState, GestureState.ACTIVE),
@@ -175,8 +178,8 @@ class AnimatedStoreScrolling {
           this.limitedScroll(
             add(
               this._scrollY,
-              this._prevTransY
-              // multiply(-1, this.scrollOffset)
+              this._prevTransY,
+              multiply(-1, this.scrollOffset)
             ) as Animated.Value<number>
           )
         ),
@@ -184,20 +187,26 @@ class AnimatedStoreScrolling {
       ],
       [
         set(this.scrollOffset, 0),
-        set(ASBS._scrollToDragVal, 0),
-        runDecay(
-          this._scrollingClock,
-          this._transY,
-          this._velocityScrollY,
-          this._transY,
-          this._wasStarted,
-          this.contentHeight
+        set(this.scrollOffsetWhileSnapped, 0),
+        // set(ASBS._scrollToDragVal, 0),
+        set(this._scrollY, 0),
+        cond(
+          eq(this._lastState, 1),
+          runDecay(
+            this._scrollingClock,
+            this._transY,
+            this._velocityScrollY,
+            this._transY,
+            this._wasStarted,
+            this.contentHeight
+          )
         ),
         set(this._velocityScrollY, 0),
         set(this._prevTransY, this._transY),
         this._transY,
       ]
     ),
+    this._transY,
   ]);
 }
 
