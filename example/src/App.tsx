@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { Navigation } from 'react-native-navigation';
 
 import Home from "./screens/Home";
 import Practise from "./screens/Practise";
@@ -9,45 +9,58 @@ Navigation.registerComponent('Practise', () => Practise);
 Navigation.registerComponent('Home', () => Home);
 Navigation.registerComponent('News', () => News);
 Navigation.registerComponent('Profile', () => Profile);
-import { Navigation } from 'react-native-navigation';
 
-Navigation.events().registerAppLaunchedListener(async () => {
-  Navigation.setRoot({
-    root: {
-      bottomTabs: {
-        id: 'BOTTOM_TABS_LAYOUT',
-        children: [
-          {
-            component: {
-              name: 'Home',
-            },
-          },
+function start() {
+  Navigation.setDefaultOptions({
+    bottomTab: {
+      fontSize: 11,
+      selectedFontSize: 11,
+    },
+  });
 
-          {
-            component: {
-              name: 'Practise',
-            },
-          },
+  Navigation.events().registerAppLaunchedListener(async () => {
+    setRoot();
+  });
+}
 
-          {
-            component: {
-              name: 'News',
+function setRoot() {
+    Navigation.setRoot({
+      root: {
+        bottomTabs: {
+          id: 'BOTTOM_TABS_LAYOUT',
+          children: [
+            {
+              component: {
+                name: 'Home',
+              },
             },
-          },
 
-          {
-            component: {
-              name: 'Profile',
+            {
+              component: {
+                name: 'Practise',
+              },
             },
-          },
-        ],
-        options: {
-          bottomTabs: {
-            titleDisplayMode: 'alwaysShow',
+
+            {
+              component: {
+                name: 'News',
+              },
+            },
+
+            {
+              component: {
+                name: 'Profile',
+              },
+            },
+          ],
+          options: {
+            bottomTabs: {
+              titleDisplayMode: 'alwaysShow',
+            },
           },
         },
       },
-    },
-  });
-});
+    });
+}
 
+export { start };
