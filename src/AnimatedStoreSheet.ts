@@ -1,15 +1,8 @@
 
 
 import Animated from 'react-native-reanimated';
-import {
-  PanGestureHandler,
-  TapGestureHandler,
-  State as GestureState,
-  gestureHandlerRootHOC,
-} from 'react-native-gesture-handler';
 
-import { runSpring, normalizeSnapPoints } from './utility';
-import {Dimensions, LayoutChangeEvent} from 'react-native';
+import { Dimensions } from 'react-native';
 
 const {
   call,
@@ -38,11 +31,7 @@ const {
 
 const screenHeight = Dimensions.get('window').height;
 
-import { AnimatedStoreScrolling as ASS } from "./AnimatedStoreScrolling";
-import { AnimatedStoreSheet as ASBS } from "./animatedStoreSheet";
-
-class MasterStore {
-  static snapPointUpdated: any = () => null;
+class AnimatedStoreSheet {
 
   /* Animated value mapped to _dragY from _scrollY */
   static _scrollToDragVal: Animated.Value<number> = new Animated.Value(0);
@@ -52,10 +41,9 @@ class MasterStore {
 
   static _snappedToTop: Animated.Value<number> = new Animated.Value(0);
 
-  static init(snapPointUpdatedCallback: any) {
-    this.snapPointUpdated = snapPointUpdatedCallback;
+  static init() {
   }
 
 }
 
-export { MasterStore };
+export { AnimatedStoreSheet };

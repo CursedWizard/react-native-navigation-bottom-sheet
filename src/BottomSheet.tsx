@@ -23,9 +23,9 @@ import {
 import { listen, dispatch } from './events';
 import type { State, RNNBottomSheetProps } from './types';
 import { runSpring, normalizeSnapPoints } from './utility';
+
 import { AnimatedStoreScrolling as ASS } from "./AnimatedStoreScrolling";
-// import { AnimatedStoreSheet as ASBS } from "./animatedStoreSheet";
-import { MasterStore as ASBS } from './masterStore';
+import { AnimatedStoreSheet as ASBS } from './AnimatedStoreSheet';
 
 const {
   call,
@@ -310,8 +310,6 @@ class BottomSheet extends React.Component<Props, State> {
 
     };
 
-    // MS.init(snapPointUpdated);
-
     const curScroll: Animated.Value<number> = new Animated.Value(0);
     const resultScroll = max(
       min(add(this._lastScrollY, curScroll), 0),
@@ -355,7 +353,6 @@ class BottomSheet extends React.Component<Props, State> {
     const __stopClock = block([
       set(this._lastBottomSheetHeight, sub(screenHeight, currentMovingPoint)),
       updateWhenFinished,
-      // set(ASS._velocityScrollY, 0),
       set(this._velocityY, 0),
       set(ASS._velocityScrollY, 0),
       set(isRun, 0),
@@ -366,6 +363,9 @@ class BottomSheet extends React.Component<Props, State> {
 
 
     this._masterTranslateY = Animated.block([
+      /**
+       * Debugging section.
+       */
       onChange(
         this._lastBottomSheetHeight,
         call([this._lastBottomSheetHeight], snapPointUpdated)
@@ -382,18 +382,15 @@ class BottomSheet extends React.Component<Props, State> {
       //   call([this._velocityY], (val: any) => generalDebug(val ,"Velocity: ")),
       // ),
 
-      cond(
-        lessThan(
-          sub(
-            this._snapPoints[this._snapPoints.length - 1],
-            sub(this._lastBottomSheetHeight, ASBS._scrollToDragVal, this._dragY)
-          ),
-          1
-        ),
-        set(ASBS._snappedToTop, 1),
-        set(ASBS._snappedToTop, 0)
-      ),
+      /**
+       * Main code section.
+       */
 
+      /**
+       * Some values do not get reset for some reason, TODO: investigate why
+       * so we reset at the beginning stage when gesture has not
+       * been identified yet.
+       */
       cond(
         or(
           eq(ASS._panScrollState, GestureState.BEGAN),
@@ -406,6 +403,10 @@ class BottomSheet extends React.Component<Props, State> {
         ]
       ),
 
+      /**
+       * Run spring animation when there are no gestures active or
+       * when there is a forced call to run the animation.
+       */
       set(
         runSpringAnimation,
         or(
@@ -420,7 +421,6 @@ class BottomSheet extends React.Component<Props, State> {
               Animated.eq(ASS._panScrollState, GestureState.CANCELLED),
               Animated.eq(ASS._panScrollState, GestureState.FAILED)
             )
-            // not(eq(add(this._lastBottomSheetHeight, this._dragY), 500)),
           ),
           and(
             greaterThan(this._forcedSet, 0),
@@ -429,6 +429,10 @@ class BottomSheet extends React.Component<Props, State> {
         )
       ),
 
+      /**
+       * Determines the current state: whether we need to scroll content or
+       * drag the sheet.
+       */
       cond(
         lessThan(
           sub(
@@ -439,24 +443,31 @@ class BottomSheet extends React.Component<Props, State> {
         ),
         cond(
           and(greaterThan(ASS._velocityScrollY, 0), eq(ASS._transY, 0)),
-          [ set(ASS._lastState, 2), ],
+          [set(ASS._lastState, 2)],
           set(ASS._lastState, 1)
         ),
         set(ASS._lastState, 2)
       ),
 
-      cond(
-        eq(this._lastBottomSheetHeight, this.topSnap),
-        set(ASS._startedAtTheTop, 1),
-        set(ASS._startedAtTheTop, 0)
-      ),
-
+      /**
+       * We are always at dragging state when dragging the header.
+       */
       cond(
         or(
           eq(this._panState, GestureState.ACTIVE),
           eq(this._panState, GestureState.BEGAN)
         ),
         set(ASS._lastState, 2)
+      ),
+
+      /**
+       * To cover the special case (when starting dragging at the point that is not at the top),
+       * we update utility variable ASS._startedAtTheTop.
+       */
+      cond(
+        eq(this._lastBottomSheetHeight, this.topSnap),
+        set(ASS._startedAtTheTop, 1),
+        set(ASS._startedAtTheTop, 0)
       ),
 
       set(
@@ -467,7 +478,7 @@ class BottomSheet extends React.Component<Props, State> {
         )
       ),
 
-      Animated.cond(
+      cond(
         runSpringAnimation,
         [
           runSpring(
@@ -496,11 +507,7 @@ class BottomSheet extends React.Component<Props, State> {
             currentMovingPoint
           ),
         ],
-        [
-          cond(Animated.clockRunning(this._clock), __stopClock),
-          // Animated.stopClock(this.clock),
-          this._draggingAnimation,
-        ]
+        [cond(clockRunning(this._clock), __stopClock), this._draggingAnimation]
       ),
     ]);
 
@@ -512,6 +519,7 @@ class BottomSheet extends React.Component<Props, State> {
       outputRange: [this.props.fadeOpacity!, 0],
       extrapolate: Animated.Extrapolate.CLAMP,
     });
+
     this.unsubscribeNavigationListener =
       Navigation.events().bindComponent(this);
 

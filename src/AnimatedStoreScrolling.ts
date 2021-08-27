@@ -34,7 +34,7 @@ const {
   Value
 } = Animated;
 
-import { MasterStore as ASBS } from "./masterStore";
+import { AnimatedStoreSheet as ASBS } from "./AnimatedStoreSheet";
 
 /**
   * Namespace for animated values associated with the scrolling content.
@@ -96,10 +96,7 @@ class AnimatedStoreScrolling {
       ? height + this.headerHeight - this.snapPoints[this.snapPoints.length - 1]
       : 0;
 
-    // console.log(height + this.state.heightOfHeader - this.snapPoints[this.snapPoints.length - 1]);
-    // this.state.contentHeight.setValue(Math.max(resultHeight, 0));
     this.contentHeight.setValue(resultHeight);
-    // console.log(this.contentHeight);
   };
 
   static limitedScroll = proc((val: Animated.Value<number>) =>
@@ -125,7 +122,11 @@ class AnimatedStoreScrolling {
 
   static _masterScrollY = block([
 
-    onChange(
+    /** 
+      * Debugging section.
+      */
+
+    /* onChange(
       this._prevTransY,
       call([this._prevTransY], (snapPoints: readonly number[]) =>
         console.log('Changed prevTransY: ' + snapPoints[0])
@@ -148,7 +149,7 @@ class AnimatedStoreScrolling {
       call([this._lastState], (snapPoints: readonly number[]) =>
         console.log('Changed state: ' + snapPoints[0])
       )
-    ),
+    ), */
 
 
     cond(eq(this._lastState, 2), [
@@ -157,6 +158,11 @@ class AnimatedStoreScrolling {
         sub(this._scrollY, this.scrollOffsetWhileSnapped)
       ),
 
+      /** 
+        * Setting scrollOffset is not required if the bottom sheet is
+        * at the very top.
+        *  TODO: describe different cases this solution solves
+        */
       cond(not(this._startedAtTheTop), [
         set(
           this.scrollOffset,
@@ -168,8 +174,18 @@ class AnimatedStoreScrolling {
     ]),
 
     cond(eq(this._lastState, 1), [
+      /** 
+        * During scrolling we need to record content offset and then use it when
+        * calculating ASBS._scrollToDragVal value, so that dragging doesn't 
+        * include unnecessary scrolling position.
+        */
       set(this.scrollOffsetWhileSnapped, this._scrollY),
 
+      /** 
+        * Contrary to the previous line of code this one covers the special case
+        * when we started dragging the bottom sheet not from the top. Here we need to
+        * include this._prevTransY as an offset.
+        */
       cond(
         not(this._startedAtTheTop),
         set(this.scrollOffsetWhileSnapped, multiply(-1, this._prevTransY))
@@ -221,9 +237,6 @@ class AnimatedStoreScrolling {
   ]);
 }
 
-/* const animated_scroll_store = new AnimatedStore();
-
-export default animated_scroll_store; */
 
 export { AnimatedStoreScrolling };
 
