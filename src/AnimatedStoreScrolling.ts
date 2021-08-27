@@ -96,7 +96,8 @@ class AnimatedStoreScrolling {
       ? height + this.headerHeight - this.snapPoints[this.snapPoints.length - 1]
       : 0;
 
-    this.contentHeight.setValue(resultHeight);
+    console.log("Layout height " + Math.max(resultHeight, 0));
+    this.contentHeight.setValue(Math.max(resultHeight, 0));
   };
 
   static limitedScroll = proc((val: Animated.Value<number>) =>

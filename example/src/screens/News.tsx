@@ -1,52 +1,28 @@
-import React, { Component, createRef } from 'react'
-import { Text, View, Button, StyleSheet } from 'react-native';
-import { RNNBottomSheet, FlatList } from 'react-native-navigation-bottom-sheet';
-import Card from '../components/Card'
+import React, { Component } from 'react'
+import { Text, StyleSheet, View, Button } from 'react-native';
+import { RNNBottomSheet } from 'react-native-navigation-bottom-sheet';
+import { colors } from "../theme";
+
 
 RNNBottomSheet.init();
 
 export default class News extends Component {
-  flatListRef = createRef<FlatList>();
+
   renderContent = () => (
-    <View>
-      <Text style={{ fontSize: 22 }}> Here's a flatlist</Text>
-      <FlatList
-        getItemLayout={(data, index) => ({
-          length: 44,
-          offset: 44 * index,
-          index,
-        })}
-        data={[
-          { key: 'Devin' },
-          { key: 'Dan' },
-          { key: 'Dominic' },
-          { key: 'Jackson' },
-          { key: 'James' },
-          // { key: 'Joel' },
-          // { key: 'John' },
-          // { key: 'Jillian' },
-          // { key: 'Jimmy' },
-          // { key: 'Julie' },
-          // { key: 'Color' },
-          // { key: 'Kellor' },
-          // { key: 'Kiker' },
-          // { key: 'Skfjsj' },
-        ]}
-        renderItem={({ item }) => <Text style={styles.item}>{item.key}</Text>}
-      />
-      <FlatList
-        gestureRef={this.flatListRef}
-        height={300}
-        horizontal={true}
-        data={[
-          { key: 'Devin' },
-          { key: 'Dan' },
-          { key: 'Dominic' },
-          { key: 'Jackson' },
-          { key: 'James' },
-        ]}
-        renderItem={({ item }) => <Card />}
-      />
+    <View
+      style={{
+        backgroundColor: 'white',
+        height: 350,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 16,
+      }}
+    >
+      <Text>
+        In order to close the modal, you can swipe it down, touch the area
+        outside it or press the back button.
+      </Text>
     </View>
   );
 
@@ -63,10 +39,6 @@ export default class News extends Component {
         <Button
           onPress={() =>
             RNNBottomSheet.openBottomSheet({
-              scrollableObjects: [this.flatListRef],
-              style: {
-                backgroundColor: '#5d95c9',
-              },
               renderContent: this.renderContent,
               snapPoints: [0, '20%', '40%', '70%'],
               borderRadius: 16,
@@ -77,6 +49,23 @@ export default class News extends Component {
         />
       </View>
     );
+  }
+  static options(props: any) {
+    return {
+      topBar: {
+        title: {
+          text: 'Profile',
+        },
+      },
+      bottomTab: {
+        text: 'Profile',
+        selectedTextColor: colors.green,
+        selectedIconColor: colors.green,
+        iconColor: colors.grey,
+        textColor: colors.grey,
+        icon: require('../assets/tabs/round_feed_black_24dp.png'),
+      },
+    };
   }
 }
 
