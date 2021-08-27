@@ -77,7 +77,7 @@ export function runDecay(
 
   const config = { deceleration: magic.deceleration }
 
-  const resultScroll = max(min(state.position, -1), multiply(contentHeight, -1));
+  const resultScroll = max(min(state.position, 0), multiply(contentHeight, -1));
   return block([
     // cond(wasStarted, [stopClock(clock), set(wasStarted, 0)]),
     cond(clockRunning(clock), 0, [

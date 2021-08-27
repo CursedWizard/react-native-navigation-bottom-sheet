@@ -34,6 +34,7 @@ const {
   lessThan,
   neq,
   clockRunning,
+  abs,
   not,
   and,
   set,
@@ -363,6 +364,7 @@ class BottomSheet extends React.Component<Props, State> {
 
     const runSpringAnimation: Animated.Value<number> = new Animated.Value(0);
 
+
     this._masterTranslateY = Animated.block([
       onChange(
         this._lastBottomSheetHeight,
@@ -391,6 +393,19 @@ class BottomSheet extends React.Component<Props, State> {
         set(ASBS._snappedToTop, 1),
         set(ASBS._snappedToTop, 0)
       ),
+
+      cond(
+        or(
+          eq(ASS._panScrollState, GestureState.BEGAN),
+          eq(this._panState, GestureState.BEGAN)
+        ),
+        [
+          set(this._velocityY, 0),
+          set(ASS._velocityScrollY, 0),
+          set(ASBS._scrollToDragVal, 0),
+        ]
+      ),
+
       set(
         runSpringAnimation,
         or(
@@ -413,17 +428,27 @@ class BottomSheet extends React.Component<Props, State> {
           )
         )
       ),
-      cond(ASBS._snappedToTop, set(ASS._lastState, 1)),
+
       cond(
-        greaterThan(ASS._transY, -2),
-        cond(greaterThan(ASS._scrollY, 0), [set(ASS._lastState, 2)]),
-        [
-          cond(
-            ASBS._snappedToTop,
-            set(ASS._lastState, 1),
-            set(ASS._lastState, 2)
+        lessThan(
+          sub(
+            this._snapPoints[this._snapPoints.length - 1],
+            sub(this._lastBottomSheetHeight, ASBS._scrollToDragVal, this._dragY)
           ),
-        ]
+          0.1
+        ),
+        cond(
+          and(greaterThan(ASS._velocityScrollY, 0), eq(ASS._transY, 0)),
+          [ set(ASS._lastState, 2), ],
+          set(ASS._lastState, 1)
+        ),
+        set(ASS._lastState, 2)
+      ),
+
+      cond(
+        eq(this._lastBottomSheetHeight, this.topSnap),
+        set(ASS._startedAtTheTop, 1),
+        set(ASS._startedAtTheTop, 0)
       ),
 
       cond(
@@ -432,6 +457,14 @@ class BottomSheet extends React.Component<Props, State> {
           eq(this._panState, GestureState.BEGAN)
         ),
         set(ASS._lastState, 2)
+      ),
+
+      set(
+        ASS.distanceTest,
+        sub(
+          this._snapPoints[this._snapPoints.length - 1],
+          this._lastBottomSheetHeight
+        )
       ),
 
       Animated.cond(

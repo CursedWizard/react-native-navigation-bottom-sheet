@@ -109,6 +109,8 @@ class AnimatedStoreScrolling {
   static _prevTransY: Animated.Value<number> = new Animated.Value(0);
   static _transY: Animated.Value<number> = new Animated.Value(0);
 
+  static _startedAtTheTop: Animated.Value<number> = new Animated.Value(0);
+
   /**
    * 1 - scrolling content
    * 2 - sheet dragging
@@ -119,18 +121,26 @@ class AnimatedStoreScrolling {
     0
   );
 
+  static distanceTest: Animated.Value<number> = new Animated.Value(0);
+
   static _masterScrollY = block([
-    // cond(this._wasStarted, [stopClock(this._scrollingClock), set(this._wasStarted, 0)]),
-    /* onChange(
-      ASBS._snappedToTop,
-      call([ASBS._snappedToTop], (snapPoints: readonly number[]) =>
-        console.log('Changed: ' + snapPoints[0])
+
+    onChange(
+      this._prevTransY,
+      call([this._prevTransY], (snapPoints: readonly number[]) =>
+        console.log('Changed prevTransY: ' + snapPoints[0])
       )
-    ), */
+    ),
     onChange(
       this.scrollOffsetWhileSnapped,
       call([this.scrollOffsetWhileSnapped], (snapPoints: readonly number[]) =>
-        console.log('Changed offsetWhileSnapped: ' + snapPoints[0])
+        console.log('Changed scrollOffsetWhileSnapped: ' + snapPoints[0])
+      )
+    ),
+    onChange(
+      this._transY,
+      call([this._transY], (snapPoints: readonly number[]) =>
+        console.log('Changed scrollOffset: ' + snapPoints[0])
       )
     ),
     onChange(
@@ -140,29 +150,30 @@ class AnimatedStoreScrolling {
       )
     ),
 
-    /* cond(and(ASBS._snappedToTop, lessThan(this._transY, 0)), [
-      set(this.scrollOffsetWhileSnapped, this._scrollY),
-    ]), */
-    /* cond(not(ASBS._snappedToTop), [
-      set(ASBS._scrollToDragVal, sub(this._scrollY, this.scrollOffsetWhileSnapped)),
-      // set(this.scrollOffset, this._scrollY),
-    ]),
-    cond(and(ASBS._snappedToTop, eq(this._transY, 0)), [
-      set(ASBS._scrollToDragVal, max(add(this._scrollY, this._prevTransY), 0)),
-      // set(this.scrollOffsetWhileSnapped, this._scrollY),
-    ]), */
-    cond(eq(this._lastState, 2), [
-      /* set(this.scrollOffset, add(this._scrollY, this.scrollOffsetWhileSnapped)),
-      set(ASBS._scrollToDragVal, add(this._scrollY, this.scrollOffsetWhileSnapped)), */
 
-      set(this.scrollOffset, this._scrollY),
-      set(ASBS._scrollToDragVal, this._scrollY),
-      set(ASBS._velocityY, this._velocityScrollY)
-      // set(this.scrollOffsetWhileSnapped, this._scrollY),
+    cond(eq(this._lastState, 2), [
+      set(
+        ASBS._scrollToDragVal,
+        sub(this._scrollY, this.scrollOffsetWhileSnapped)
+      ),
+
+      cond(not(this._startedAtTheTop), [
+        set(
+          this.scrollOffset,
+          sub(this._scrollY, this.scrollOffsetWhileSnapped)
+        ),
+      ]),
+
+      set(ASBS._velocityY, this._velocityScrollY),
     ]),
 
     cond(eq(this._lastState, 1), [
-      set(this.scrollOffsetWhileSnapped, min(this._scrollY, this.scrollOffsetWhileSnapped)),
+      set(this.scrollOffsetWhileSnapped, this._scrollY),
+
+      cond(
+        not(this._startedAtTheTop),
+        set(this.scrollOffsetWhileSnapped, multiply(-1, this._prevTransY))
+      ),
     ]),
 
     cond(
@@ -171,6 +182,7 @@ class AnimatedStoreScrolling {
         eq(this._panScrollState, GestureState.BEGAN)
       ),
       [
+        // TODO: stop draggin sheet clock
         set(this._wasStarted, 0),
         stopClock(this._scrollingClock),
         set(
@@ -188,7 +200,6 @@ class AnimatedStoreScrolling {
       [
         set(this.scrollOffset, 0),
         set(this.scrollOffsetWhileSnapped, 0),
-        // set(ASBS._scrollToDragVal, 0),
         set(this._scrollY, 0),
         cond(
           eq(this._lastState, 1),
