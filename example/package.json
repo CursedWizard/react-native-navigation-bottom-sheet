@@ -9,7 +9,6 @@
     "watch-need-help": "echo 256 | sudo tee -a /proc/sys/fs/inotify/max_user_instances && echo 32768 | sudo tee -a /proc/sys/fs/inotify/max_queued_events && echo 65536 | sudo tee -a /proc/sys/fs/inotify/max_user_watches && watchman shutdown-server",
     "start": "react-native start"
   },
-  "react": "16.13.1",
   "dependencies": {
     "react": "17.0.1",
     "react-native": "0.63.4",
