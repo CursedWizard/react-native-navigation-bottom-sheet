@@ -93,9 +93,6 @@ class BottomSheet extends React.Component<Props, State> {
   /* Clock used for snapping animations of the bottom sheet */
   _clock = new Animated.Clock();
 
-  /* Clock used for an animation of a scrolling view (not implemented yet) */
-  _scrollingClock = new Animated.Clock();
-
   /* Snap points mapped to Animated values */
   _snapPoints: Animated.Value<number>[] = [];
 
@@ -107,9 +104,6 @@ class BottomSheet extends React.Component<Props, State> {
 
   /* State of a gesture */
   _panState: Animated.Value<number> = new Animated.Value(GestureState.END);
-
-  /* Position of a last tap */
-  _absoluteY: Animated.Value<number> = new Animated.Value(0);
 
   /* Basically last snap point */
   _lastBottomSheetHeight: Animated.Value<number> = new Animated.Value(
@@ -147,31 +141,6 @@ class BottomSheet extends React.Component<Props, State> {
     },
   ]);
 
-  /* Value of a current dragging postion of content in the scroll view */
-  _scrollY: Animated.Value<number> = new Animated.Value(0);
-
-  _lastScrollY: Animated.Value<number> = new Animated.Value(0);
-
-  _masterScrollY: Animated.Value<number> = new Animated.Value(0);
-
-  /* Value of a current speed of content dragging in the scroll view  */
-  _velocityScrollY: Animated.Value<number> = new Animated.Value(0);
-
-  /* State of a gesture for a scroll view */
-  _panScrollState: Animated.Value<number> = new Animated.Value(GestureState.END);
-
-  _onGestureEventScrolling = Animated.event([
-    {
-      nativeEvent: {
-        translationY: this._scrollY,
-        velocityY: this._velocityScrollY,
-        state: this._panScrollState,
-      },
-    },
-  ]);
-
-  /* Animated value mapped to _dragY from _scrollY */
-  _scrollToDragVal: Animated.Value<number> = new Animated.Value(0);
 
   _masterOpacity: Animated.Node<number>;
 
@@ -200,29 +169,6 @@ class BottomSheet extends React.Component<Props, State> {
     //   this._velocityY.setValue(0);
     // }
     // console.log('Tapped');
-  };
-
-  handleLayoutHeader = ({
-    nativeEvent: {
-      layout: { height: heightOfHeader },
-    },
-  }: LayoutChangeEvent) => {
-    this.setState({ heightOfHeader });
-  };
-
-  handleLayoutContent = ({
-    nativeEvent: {
-      layout: { height },
-    },
-  }: LayoutChangeEvent) => {
-    const resultHeight = this.props.enabledContentGestureInteraction
-      ? height +
-        this.state.heightOfHeader -
-        this.snapPoints[this.snapPoints.length - 1]
-      : 0;
-
-    console.log(height + this.state.heightOfHeader - this.snapPoints[this.snapPoints.length - 1]);
-    this.state.contentHeight.setValue(Math.max(resultHeight, 0));
   };
 
   unsubscribeDismissBottomSheet: any;
@@ -310,12 +256,6 @@ class BottomSheet extends React.Component<Props, State> {
 
     };
 
-    const curScroll: Animated.Value<number> = new Animated.Value(0);
-    const resultScroll = max(
-      min(add(this._lastScrollY, curScroll), 0),
-      multiply(this.state.contentHeight, -1)
-    );
-
     const isRun = new Animated.Value(0);
     const storedResult: Animated.Value<number> = new Animated.Value(0);
 
@@ -331,8 +271,6 @@ class BottomSheet extends React.Component<Props, State> {
           eq(ASS._lastState, 2),
           set(this._velocityY, 0),
         ),
-        set(this._lastScrollY, resultScroll),
-        set(this._scrollY, 0),
         set(ASBS._scrollToDragVal, 0),
         set(ASBS._velocityY, 0),
         storedResult,
@@ -645,7 +583,6 @@ class BottomSheet extends React.Component<Props, State> {
       ASS._wasStarted.setValue(1);
       Navigation.dismissModal(this.props.componentId);
     }, 250);
-    // setTimeout(() => Navigation.dismissOverlay(this.props.componentId), 250);
   };
 
   render() {
@@ -712,8 +649,6 @@ class BottomSheet extends React.Component<Props, State> {
                 <PanGestureHandler
                   onGestureEvent={ASS._onGestureEventScrolling}
                   onHandlerStateChange={ASS._onGestureEventScrolling}
-                  // waitFor={this.props.scrollableObjects ? this.props.scrollableObjects[0] : null}
-                  // simultaneousHandlers={this.props.scrollableObjects ? this.props.scrollableObjects[0] : null}
                 >
                   <Animated.View
                     style={{
