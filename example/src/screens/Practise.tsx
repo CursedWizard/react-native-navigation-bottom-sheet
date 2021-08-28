@@ -68,6 +68,7 @@ export default class Practise extends Component<Props, {}> {
               style: {
                 backgroundColor: '#5d95c9',
               },
+              // animationConfig: { deceleration: 0.999 },
               renderContent: this.renderContent,
               renderHeader: this.renderHeader,
               snapPoints: [0, '20%', '70%'],

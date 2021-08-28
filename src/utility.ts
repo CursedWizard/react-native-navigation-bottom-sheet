@@ -4,6 +4,7 @@
 /** -------------------------------------------- */
 
 import Animated, { Easing } from "react-native-reanimated";
+import type { AnimationConfig } from './types';
 
 const magic = {
   damping: 50,
@@ -12,20 +13,23 @@ const magic = {
   overshootClamping: true,
   restSpeedThreshold: 0.3,
   restDisplacementThreshold: 0.3,
-  deceleration: 0.999,
+  deceleration: 0.996,
   bouncyFactor: 1,
   velocityFactor: 0.9,
   toss: 0.4,
   coefForTranslatingVelocities: 5,
 }
 
-const {
+
+let {
   damping,
   mass,
   stiffness,
   overshootClamping,
   restSpeedThreshold,
   restDisplacementThreshold,
+  deceleration,
+  velocityFactor
 } = magic
 
 
@@ -47,6 +51,23 @@ const {
   greaterOrEq,
 } = Animated
 
+export function overrideConfig(config: AnimationConfig) {
+  damping = config.damping ? config.damping : damping;
+  mass = config.mass ? config.mass : mass;
+  stiffness = config.stiffness ? config.stiffness : stiffness;
+  deceleration = config.deceleration ? config.deceleration : deceleration;
+  mass = config.mass ? config.mass : mass;
+  velocityFactor = config.velocityFactor ? config.velocityFactor : velocityFactor;
+
+  restSpeedThreshold = config.restSpeedThreshold
+    ? config.restSpeedThreshold
+    : restSpeedThreshold;
+
+  restDisplacementThreshold = config.restDisplacementThreshold
+    ? config.restDisplacementThreshold
+    : restDisplacementThreshold;
+}
+
 /**
  * Converts snap points with percentage to fixed numbers.
  */
@@ -65,7 +86,6 @@ export function runDecay(
   value: Animated.Node<number>,
   velocity: Animated.Node<number>,
   positionToUpdate: any,
-  wasStarted: Animated.Value<number>,
   contentHeight: Animated.Value<number>
 ) {
   const state = {
@@ -75,26 +95,23 @@ export function runDecay(
     time: new Value(0),
   }
 
-  const config = { deceleration: magic.deceleration }
+  const config = { deceleration }
 
   const resultScroll = max(min(state.position, 0), multiply(contentHeight, -1));
   return block([
-    // cond(wasStarted, [stopClock(clock), set(wasStarted, 0)]),
     cond(clockRunning(clock), 0, [
       set(state.finished, 0),
-      set(state.velocity, multiply(velocity, magic.velocityFactor)),
+      set(state.velocity, multiply(velocity, velocityFactor)),
       set(state.position, value),
       set(state.time, 0),
       startClock(clock),
     ]),
-    cond(greaterOrEq(resultScroll, 0), [set(state.finished, 1), stopClock(clock)]),
-    cond(lessThan(resultScroll, multiply(contentHeight, -1)), [set(state.finished, 1), stopClock(clock)]),
+
     cond(clockRunning(clock), [
-      // positionToUpdate(state.position),
       cond(state.finished, 0, set(positionToUpdate, resultScroll)),
-      cond(wasStarted, set(positionToUpdate, 0)),
       decay(clock, state, config),
     ]),
+
     cond(state.finished, [stopClock(clock)]),
     resultScroll,
   ]);
@@ -161,7 +178,7 @@ export function runSpring(
     time: new Value(0),
   };
 
-  const config = {
+  const config: Animated.SpringConfig = {
     damping,
     mass,
     stiffness,
@@ -176,7 +193,7 @@ export function runSpring(
       clockRunning(clock),
       [
         // if the clock is already running we update the toValue, in case a new dest has been passed in
-        set(config.toValue, end),
+        set(config.toValue as Animated.Value<number>, end),
       ],
       [
         // if the clock isn't running we reset all the animation params and start the clock
@@ -185,7 +202,7 @@ export function runSpring(
         set(state.position, start),
         set(state.velocity, velocity),
         set(state.time, 0),
-        set(config.toValue, end),
+        set(config.toValue as Animated.Value<number>, end),
         startClock(clock),
       ],
     ),

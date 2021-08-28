@@ -1,13 +1,15 @@
 import Animated from 'react-native-reanimated';
 import { ViewStyle } from 'react-native';
 
-export interface springConfig {
+export interface AnimationConfig {
   damping?: number;
   mass?: number;
   stiffness?: number;
   restSpeedThreshold?: number;
   restDisplacementThreshold?: number;
   toss?: number;
+  deceleration?: number;
+  velocityFactor?: number;
 }
 
 export interface BottomSheetInterface {
@@ -74,6 +76,11 @@ export interface RNNBottomSheetProps {
    * Border radius of the bottom sheet.
    */
   borderRadius?: number;
+
+  /** 
+    * Object consisting of several options defining behavior of animation.
+    */
+  animationConfig?: AnimationConfig;
 
   /**
    * Callback when the sheet position changed.

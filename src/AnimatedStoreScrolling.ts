@@ -69,8 +69,6 @@ class AnimatedStoreScrolling {
   static headerHeight: number = 0;
   static snapPoints: readonly number[] = [];
 
-  static _wasStarted: Animated.Value<number> = new Animated.Value(0);
-
   static init = (
     enabledContentGestureInteraction: boolean,
     snapPoints: readonly number[]
@@ -96,7 +94,6 @@ class AnimatedStoreScrolling {
       ? height + this.headerHeight - this.snapPoints[this.snapPoints.length - 1]
       : 0;
 
-    console.log("Layout height " + Math.max(resultHeight, 0));
     this.contentHeight.setValue(Math.max(resultHeight, 0));
   };
 
@@ -200,7 +197,6 @@ class AnimatedStoreScrolling {
       ),
       [
         // TODO: stop draggin sheet clock
-        set(this._wasStarted, 0),
         stopClock(this._scrollingClock),
         set(
           this._transY,
@@ -225,7 +221,6 @@ class AnimatedStoreScrolling {
             this._transY,
             this._velocityScrollY,
             this._transY,
-            this._wasStarted,
             this.contentHeight
           )
         ),

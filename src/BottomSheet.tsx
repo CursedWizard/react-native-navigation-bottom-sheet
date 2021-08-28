@@ -22,7 +22,7 @@ import {
 
 import { listen, dispatch } from './events';
 import type { State, RNNBottomSheetProps } from './types';
-import { runSpring, normalizeSnapPoints } from './utility';
+import { runSpring, normalizeSnapPoints, overrideConfig } from './utility';
 
 import { AnimatedStoreScrolling as ASS } from "./AnimatedStoreScrolling";
 import { AnimatedStoreSheet as ASBS } from './AnimatedStoreSheet';
@@ -183,6 +183,9 @@ class BottomSheet extends React.Component<Props, State> {
       this._snapPoints.push(new Animated.Value(this.snapPoints[i]));
     }
 
+    if (props.animationConfig)
+      overrideConfig(props.animationConfig);
+
     ASS.init(this.props.enabledContentGestureInteraction ?? true, this.snapPoints);
 
     // animated_scroll_store._wasStarted.setValue(1);
@@ -191,18 +194,23 @@ class BottomSheet extends React.Component<Props, State> {
       (
         bottomPoint: Animated.Value<number>,
         upperPoint: Animated.Value<number>
-      ) => Animated.abs(Animated.sub(bottomPoint, upperPoint))
+      ) => abs(sub(bottomPoint, upperPoint))
     );
 
+    const toss =
+      props.animationConfig && props.animationConfig.toss !== undefined
+        ? props.animationConfig.toss
+        : 0.28;
+
     const actualVelocity = cond(eq(ASS._lastState, 2), add(ASBS._velocityY, this._velocityY), this._velocityY);
-    const currentPoint = Animated.sub(
+    const currentPoint = sub(
       this._lastBottomSheetHeight,
       add(this._dragY, ASBS._scrollToDragVal),
-      Animated.multiply(0.25, actualVelocity)
+      multiply(toss, actualVelocity)
     ) as Animated.Value<number>;
 
     const rememberAndReturn = Animated.proc((value: Animated.Node<number>) =>
-      Animated.block([Animated.set(this._lastBottomSheetHeight, value), value])
+      block([set(this._lastBottomSheetHeight, value), value])
     );
     /**
      * Recursive function finding closest snap point.
@@ -211,8 +219,8 @@ class BottomSheet extends React.Component<Props, State> {
       return index === this._snapPoints.length - 1
         ? rememberAndReturn(this._snapPoints[index])
         : // left is top, right is bottom
-          (Animated.cond(
-            Animated.greaterThan(
+          (cond(
+            greaterThan(
               distance(this._snapPoints[index + 1], currentPoint),
               distance(currentPoint, this._snapPoints[index])
             ),
@@ -224,12 +232,12 @@ class BottomSheet extends React.Component<Props, State> {
     // Does not let the bottom sheet to go higher the highest snap point
     // and below the lowest snap point
     const limitedAnimatedValue = (value: any) => {
-      return Animated.cond(
-        Animated.eq(this._lastBottomSheetHeight, this._snapPoints[0]),
-        Animated.min(value, Animated.sub(screenHeight, this.snapPoints[0])),
-        Animated.max(
+      return cond(
+        eq(this._lastBottomSheetHeight, this._snapPoints[0]),
+        min(value, sub(screenHeight, this.snapPoints[0])),
+        max(
           value,
-          Animated.sub(
+          sub(
             screenHeight,
             this.snapPoints[this.snapPoints.length - 1]
           )
@@ -540,7 +548,6 @@ class BottomSheet extends React.Component<Props, State> {
    * Touched outside drawer
    */
   touchedOutside = () => {
-    console.log('Touched outsied');
     const { dismissWhenTouchOutside } = this.props;
 
     if (dismissWhenTouchOutside) {
@@ -566,7 +573,7 @@ class BottomSheet extends React.Component<Props, State> {
   closeBottomSheet = () => {
     if (this.closed) return;
 
-    console.log('Closing bottom sheet');
+    // console.log('Closing bottom sheet');
     this.closed = true;
 
     this.snapTo(screenHeight - this.snapPoints[0]);
@@ -580,7 +587,6 @@ class BottomSheet extends React.Component<Props, State> {
       ASS._velocityScrollY.setValue(0);
       ASS._prevTransY.setValue(0);
       ASS._transY.setValue(0);
-      ASS._wasStarted.setValue(1);
       Navigation.dismissModal(this.props.componentId);
     }, 250);
   };
