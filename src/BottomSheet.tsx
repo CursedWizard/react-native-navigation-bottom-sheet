@@ -130,6 +130,8 @@ class BottomSheet extends React.Component<Props, State> {
       ]
   );
 
+  _resetValues: Animated.Value<number> = new Animated.Value(1);
+
   /* Gesture mapping */
   _onGestureEvent = Animated.event([
     {
@@ -141,7 +143,7 @@ class BottomSheet extends React.Component<Props, State> {
     },
   ]);
 
-
+  /* Opacity of the view outside of the bottom sheet */
   _masterOpacity: Animated.Node<number>;
 
   /* Dragging animation for bottom sheet, calculated as offset + dragging value */
@@ -332,6 +334,16 @@ class BottomSheet extends React.Component<Props, State> {
        * Main code section.
        */
 
+      cond(this._resetValues, [
+        set(ASBS._scrollToDragVal, 0),
+        set(ASS._panScrollState, GestureState.END),
+        set(ASS._scrollY, 0),
+        set(ASS._velocityScrollY, 0),
+        set(ASS._prevTransY, 0),
+        set(ASS._transY, 0),
+        set(this._resetValues, 0),
+      ]),
+
       /**
        * Some values do not get reset for some reason, TODO: investigate why
        * so we reset at the beginning stage when gesture has not
@@ -358,14 +370,14 @@ class BottomSheet extends React.Component<Props, State> {
         or(
           and(
             or(
-              Animated.eq(this._panState, GestureState.END),
-              Animated.eq(this._panState, GestureState.CANCELLED),
-              Animated.eq(this._panState, GestureState.FAILED)
+              eq(this._panState, GestureState.END),
+              eq(this._panState, GestureState.CANCELLED),
+              eq(this._panState, GestureState.FAILED)
             ),
             or(
-              Animated.eq(ASS._panScrollState, GestureState.END),
-              Animated.eq(ASS._panScrollState, GestureState.CANCELLED),
-              Animated.eq(ASS._panScrollState, GestureState.FAILED)
+              eq(ASS._panScrollState, GestureState.END),
+              eq(ASS._panScrollState, GestureState.CANCELLED),
+              eq(ASS._panScrollState, GestureState.FAILED)
             )
           ),
           and(
@@ -403,7 +415,7 @@ class BottomSheet extends React.Component<Props, State> {
           eq(this._panState, GestureState.ACTIVE),
           eq(this._panState, GestureState.BEGAN)
         ),
-        set(ASS._lastState, 2)
+        [ set(ASS._lastState, 2), stopClock(ASS._scrollingClock) ]
       ),
 
       /**
@@ -414,14 +426,6 @@ class BottomSheet extends React.Component<Props, State> {
         eq(this._lastBottomSheetHeight, this.topSnap),
         set(ASS._startedAtTheTop, 1),
         set(ASS._startedAtTheTop, 0)
-      ),
-
-      set(
-        ASS.distanceTest,
-        sub(
-          this._snapPoints[this._snapPoints.length - 1],
-          this._lastBottomSheetHeight
-        )
       ),
 
       cond(
@@ -581,12 +585,6 @@ class BottomSheet extends React.Component<Props, State> {
 
     dispatch('MARK_CLOSED');
     setTimeout(() => {
-      ASBS._scrollToDragVal.setValue(0);
-      ASS._panScrollState.setValue(5);
-      ASS._scrollY.setValue(0);
-      ASS._velocityScrollY.setValue(0);
-      ASS._prevTransY.setValue(0);
-      ASS._transY.setValue(0);
       Navigation.dismissModal(this.props.componentId);
     }, 250);
   };

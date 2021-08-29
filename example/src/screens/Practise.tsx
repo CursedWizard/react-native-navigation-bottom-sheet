@@ -71,7 +71,7 @@ export default class Practise extends Component<Props, {}> {
               // animationConfig: { deceleration: 0.999 },
               renderContent: this.renderContent,
               renderHeader: this.renderHeader,
-              snapPoints: [0, '20%', '70%'],
+              snapPoints: [0, '30%', '80%'],
               borderRadius: 16,
               onChange: (index: number) => console.log('Snapped to ' + index),
             })

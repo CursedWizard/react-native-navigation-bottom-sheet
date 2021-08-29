@@ -116,8 +116,6 @@ class AnimatedStoreScrolling {
     0
   );
 
-  static distanceTest: Animated.Value<number> = new Animated.Value(0);
-
   static _masterScrollY = block([
 
     /** 
@@ -141,13 +139,13 @@ class AnimatedStoreScrolling {
       call([this._transY], (snapPoints: readonly number[]) =>
         console.log('Changed scrollOffset: ' + snapPoints[0])
       )
-    ),
+    ), */
     onChange(
       this._lastState,
       call([this._lastState], (snapPoints: readonly number[]) =>
         console.log('Changed state: ' + snapPoints[0])
       )
-    ), */
+    ),
 
 
     cond(eq(this._lastState, 2), [
@@ -175,7 +173,7 @@ class AnimatedStoreScrolling {
       /** 
         * During scrolling we need to record content offset and then use it when
         * calculating ASBS._scrollToDragVal value, so that dragging doesn't 
-        * include unnecessary scrolling position.
+        * include unnecessary scrolling position value.
         */
       set(this.scrollOffsetWhileSnapped, this._scrollY),
 
@@ -220,9 +218,8 @@ class AnimatedStoreScrolling {
             this._scrollingClock,
             this._transY,
             this._velocityScrollY,
-            this._transY,
             this.contentHeight
-          )
+          ),
         ),
         set(this._velocityScrollY, 0),
         set(this._prevTransY, this._transY),

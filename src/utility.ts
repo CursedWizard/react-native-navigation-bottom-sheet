@@ -43,8 +43,11 @@ const {
   block,
   min,
   max,
+  eq,
   Value,
   spring,
+  abs,
+  sub,
   clockRunning,
   startClock,
   stopClock,
@@ -83,9 +86,8 @@ export const normalizeSnapPoints = (
 
 export function runDecay(
   clock: Animated.Clock,
-  value: Animated.Node<number>,
+  value: Animated.Value<number>,
   velocity: Animated.Node<number>,
-  positionToUpdate: any,
   contentHeight: Animated.Value<number>
 ) {
   const state = {
@@ -107,10 +109,14 @@ export function runDecay(
       startClock(clock),
     ]),
 
+    // cond(lessThan(abs(sub(resultScroll, multiply(contentHeight, -1))), 0.1), [set(state.finished, 1), stopClock(clock)]),
+    // cond(lessThan(abs(resultScroll), 0.1), [set(state.finished, 1), stopClock(clock)]),
     cond(clockRunning(clock), [
-      cond(state.finished, 0, set(positionToUpdate, resultScroll)),
+      cond(state.finished, 0, set(value, resultScroll)),
       decay(clock, state, config),
     ]),
+    /* cond(greaterOrEq(state.position, 0), [set(state.finished, 1), stopClock(clock)]),
+    cond(lessThan(state.position, multiply(contentHeight, -1)), [set(state.finished, 1), stopClock(clock)]), */
 
     cond(state.finished, [stopClock(clock)]),
     resultScroll,
