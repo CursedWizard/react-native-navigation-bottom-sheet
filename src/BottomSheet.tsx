@@ -523,7 +523,6 @@ class BottomSheet extends React.Component<Props, State> {
    * Registers all the listenrs for this component
    */
   registerListeners = () => {
-    console.log('Registering listeners...');
     this.unsubscribeSnapTo = listen('BOTTOM_SHEET_SNAP_TO', (index: number) => {
       this.snapTo(screenHeight - this.snapPoints[index]);
     });
@@ -577,7 +576,6 @@ class BottomSheet extends React.Component<Props, State> {
   closeBottomSheet = () => {
     if (this.closed) return;
 
-    // console.log('Closing bottom sheet');
     this.closed = true;
 
     this.snapTo(screenHeight - this.snapPoints[0]);

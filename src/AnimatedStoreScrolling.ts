@@ -140,12 +140,12 @@ class AnimatedStoreScrolling {
         console.log('Changed scrollOffset: ' + snapPoints[0])
       )
     ), */
-    onChange(
+    /* onChange(
       this._lastState,
       call([this._lastState], (snapPoints: readonly number[]) =>
         console.log('Changed state: ' + snapPoints[0])
       )
-    ),
+    ), */
 
 
     cond(eq(this._lastState, 2), [

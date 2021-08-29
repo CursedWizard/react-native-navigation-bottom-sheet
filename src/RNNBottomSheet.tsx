@@ -27,7 +27,7 @@ export default class RNNBottomSheet {
 
   static init() {
     if (!this.registered) {
-      console.log("Registering bottomSheet")
+      console.log("Registering bottom sheet")
       Navigation.registerComponent(this.bottomSheetName, () => BottomSheet);
       this.registered = true;
 
