@@ -1,6 +1,6 @@
 {
   "name": "react-native-navigation-bottom-sheet",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "description": "A performant customizable bottom sheet component made on top of wix react-native-navigation library.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",

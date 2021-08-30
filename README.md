@@ -101,12 +101,12 @@ renderContent = () => (
 
 |               name               | required |          type           | description                                                  |
 | :------------------------------: | :------: | :---------------------: | :----------------------------------------------------------- |
-|            snapPoints            |   yes    |  (number \| string)[]   | Points for snapping of bottom sheet coomponent. They define distance from bottom of the screen. Example: [0, 100, 500]. |
-|         initialSnapIndex         |    no    |         number          | Index of a point bottom sheet should snap to when the component mounts. Defaults to the last point specified in the snapPoints array. |
-|          renderContent           |    no    |        ReactNode        | Method for rendering scrollable content of bottom sheet.     |
-|           renderHeader           |    no    |        ReactNode        | Method for rendering non-scrollable header of bottom sheet.  |
-|     dismissWhenTouchOutside      |    no    |         boolean         | Should bottom sheet be dismissed when touched outside. Defaults to true. |
-| enabledContentGestureInteraction |    no    |         boolean         | Defines if bottom sheet content could be scrollable by gesture. Default true. |
+|            snapPoints            |   yes    |  (number \| string)[]   | Points for snapping of the bottom sheet component. They define distance from bottom of the screen. Might be number or percent (as string e.g. '20%'). Example: [0, 100, 500]. |
+|         initialSnapIndex         |    no    |         number          | Index of a point the bottom sheet should snap to when the component mounts. Defaults to the last point specified in the snapPoints array. |
+|          renderContent           |    no    |        ReactNode        | Method for rendering scrollable content of the bottom sheet. |
+|           renderHeader           |    no    |        ReactNode        | Method for rendering non-scrollable header of the bottom sheet. |
+|     dismissWhenTouchOutside      |    no    |         boolean         | Should the bottom sheet be dismissed when touched outside. Default true. |
+| enabledContentGestureInteraction |    no    |         boolean         | Defines if the bottom sheet content could be scrollable by gesture. Default true. |
 |           fadeOpacity            |    no    |         number          | Opacity of the screen outside the bottom sheet. Default 0.7. |
 |           borderRadius           |    no    |         number          | Border radius of the bottom sheet. Note if you have header rendered, header should have border radius too. |
 |         backgroundColor          |    no    |         string          | Background color of the bottom sheet. Default '#fff'.        |
@@ -150,7 +150,7 @@ Returns a boolean indicating whether the bottom sheet is opened or not.
 
 ## :warning: Take into account.
 
-I developed and tested the component primarily on android devices and even though theoretically it should also work on ios, i can't test it and thus vouch that it will function the same way.
+I developed and tested the component primarily on android devices and even though, theoretically, it should also work on IOS, I can't test it and thus vouch that it will function the same way.
 
 ## :clipboard: Roadmap
 
