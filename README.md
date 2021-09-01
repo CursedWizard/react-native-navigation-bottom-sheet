@@ -2,8 +2,8 @@
 
 A performant customizable bottom sheet component made on top of wix react-native-navigation library. The component is built using [react-native-gesture-handler](https://github.com/kmagiera/react-native-gesture-handler) and [react-native-reanimated](https://github.com/kmagiera/react-native-reanimated). This solution uses `showModal` under the hood to display the bottom sheet. Default animations and hardware back button press are overridden and properly adjusted for seamless integration with react-native-navigation library.
 
-|      | ![](assets/scrolling_view.gif) |      | ![](assets/snapping_points.gif) |      |
-| ---- | :----------------------------: | ---- | :-----------------------------: | ---- |
+| ![](assets/scrolling_view.gif) | ![](assets/snapping_points.gif) | ![](assets/dialog.gif) |
+| :----------------------------: | :-----------------------------: | :--------------------: |
 
 To replicate the behavior of the bottom sheet as showcased in gifs above check out the `example/` folder.
 

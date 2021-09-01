@@ -12,7 +12,7 @@ export default class News extends Component {
     <View
       style={{
         backgroundColor: 'white',
-        height: 350,
+        height: 250,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -54,11 +54,11 @@ export default class News extends Component {
     return {
       topBar: {
         title: {
-          text: 'Profile',
+          text: 'News',
         },
       },
       bottomTab: {
-        text: 'Profile',
+        text: 'News',
         selectedTextColor: colors.green,
         selectedIconColor: colors.green,
         iconColor: colors.grey,

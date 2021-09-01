@@ -612,17 +612,15 @@ class BottomSheet extends React.Component<Props, State> {
                   backgroundColor: this.props.backgroundColor,
                   borderTopLeftRadius: this.props.borderRadius,
                   borderTopRightRadius: this.props.borderRadius,
-                },
-                style,
-                {
-                  height: this.topSnap,
-                  width: '100%',
                   transform: [
                     {
                       translateY: this._masterTranslateY,
                     },
                   ],
+                  height: this.topSnap,
+                  width: '100%',
                 },
+                style,
               ]}
             >
               <PanGestureHandler
@@ -644,6 +642,7 @@ class BottomSheet extends React.Component<Props, State> {
                 style={{
                   overflow: 'hidden',
                   width: '100%',
+                  height: '100%',
                   borderTopLeftRadius: this.props.borderRadius,
                   borderTopRightRadius: this.props.borderRadius,
                 }}
@@ -654,7 +653,7 @@ class BottomSheet extends React.Component<Props, State> {
                 >
                   <Animated.View
                     style={{
-                      height: this.topSnap,
+                      height: '100%',
                     }}
                   >
                     <Animated.View
@@ -688,6 +687,7 @@ const styles = StyleSheet.create({
   containerStyle: {
     flex: 1,
     flexDirection: 'row',
+    justifyContent: "center",
   },
   overlayStyle: {
     position: 'absolute',

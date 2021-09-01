@@ -49,6 +49,31 @@ const renderContent = () => (
   </>
 );
 
+const renderDialogContent = () => (
+  <View
+    style={{
+      height: '100%',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      padding: 20,
+    }}
+  >
+    <Image
+      source={require('../assets/images/swords.png')}
+      style={localStyles.dialogImage}
+    />
+    <Text style={localStyles.dialogTitle}>Arena</Text>
+    <Text style={localStyles.dialogText}>
+      Arena mode is 1v1 fight where both opponents are given 60 seconds to solve
+      each task, total 8 tasks. The fastest wins.
+    </Text>
+    <View style={{flex: 1}}></View>
+    <TouchableOpacity style={localStyles.dialogButton}>
+      <Text style={{fontSize: 17, color: 'white', fontWeight: '600'}}>Play</Text>
+    </TouchableOpacity>
+  </View>
+);
+
 const renderRowButtons = () => (
   <View style={localStyles.rowButtons}>
     <Button color={colors.green} onPress={() => RNNBottomSheet.snapTo(1)} title="1"></Button>
@@ -109,8 +134,30 @@ export default class Home extends Component<Props, {}> {
                 },
               })
             }
-            title="Show modal"
+            title="Show modal sheet"
           />
+          <View style={{marginTop: 16}}>
+          <Button
+            onPress={() =>
+              RNNBottomSheet.openBottomSheet({
+                renderContent: renderDialogContent,
+                // renderHeader: renderHeader,
+                snapPoints: [0, '90%'],
+                borderRadius: 16,
+
+                onChange: (index: number) => console.log(index),
+                enabledContentGestureInteraction: true,
+                style: {
+                  backgroundColor: 'white',
+                  width: "80%",
+                  height: "75%",
+                  borderRadius: 16
+                },
+              })
+            }
+            title="Show dialog"
+          />
+          </View>
         </View>
       </>
     );
@@ -131,6 +178,14 @@ const localStyles = StyleSheet.create({
     shadowRadius: 5,
     shadowOpacity: 0.4,
   },
+  dialogButton: {
+    width: 180,
+    height: 32,
+    backgroundColor: '#C382E3',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   panelButton: {
     padding: 13,
     marginBottom: 20,
@@ -150,7 +205,22 @@ const localStyles = StyleSheet.create({
     height: 200,
     borderRadius: 6,
   },
-
+  dialogImage: {
+    width: 250,
+    height: 250,
+    alignItems: 'center',
+    },
+ dialogTitle: {
+    fontSize:  21,
+    color: "#313154",
+   },
+ dialogText: {
+   textAlign: "center",
+    fontSize:  13,
+    color: "#A7A8AD",
+    marginTop: 7,
+    alignItems: "center"
+   },
   mainTitle: {
     fontSize: 21,
     fontWeight: 'bold',
