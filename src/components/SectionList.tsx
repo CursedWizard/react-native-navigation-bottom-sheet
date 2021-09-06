@@ -1,8 +1,8 @@
 import React, { Component, createRef } from 'react'
 
 import {
-  FlatList as RNFlatList,
-  FlatListProps as RNFlatListProps,
+  SectionList as RNSectionList,
+  SectionListProps as RNSectionListProps,
   StyleProp,
   ViewStyle,
   View
@@ -10,15 +10,15 @@ import {
 import Animated from 'react-native-reanimated';
 import { NativeViewGestureHandler } from 'react-native-gesture-handler';
 
-const AnimatedFlatList = Animated.createAnimatedComponent(
-  RNFlatList
+const AnimatedSectionList = Animated.createAnimatedComponent(
+  RNSectionList
 ) as React.ComponentClass<
-  Animated.AnimateProps<ViewStyle, RNFlatListProps<any>>,
+  Animated.AnimateProps<ViewStyle, RNSectionListProps<any>>,
   any
 >;
 
 type Props<T> = Omit<
-  RNFlatListProps<T>,
+  RNSectionListProps<T>,
   | 'overScrollMode'
   | 'bounces'
   | 'decelerationRate'
@@ -50,7 +50,7 @@ export default class FlatList extends Component<Props<any>, {}> {
     return (
       <View style={{ height: props.height ? props.height : this.state.scrollContentHeight }}>
         <NativeViewGestureHandler ref={props.gestureRef ? props.gestureRef : this.nativeGestureRef}>
-          <AnimatedFlatList
+          <AnimatedSectionList
             {...props}
             onContentSizeChange={this.handleScrollSizeChange}
             showsVerticalScrollIndicator={false}

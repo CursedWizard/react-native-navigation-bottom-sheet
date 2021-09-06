@@ -2,6 +2,10 @@ import React, { Component } from 'react'
 import { Text, View, StyleSheet, Button, TouchableOpacity, Image } from 'react-native';
 import { RNNBottomSheet } from 'react-native-navigation-bottom-sheet';
 import { colors, styles } from "../theme";
+import {
+  FlatListContent,
+  SectionListContent,
+} from '../components/FlatListContent';
 
 RNNBottomSheet.init();
 
@@ -24,6 +28,19 @@ const DescriptionSandCat = () => (
   </View>
 );
 
+const DescriptionBlackFootedCat = () => (
+  <View>
+    <Text>
+      The black-footed cat (Felis nigripes), also called the small-spotted cat,
+      is the smallest wild cat in Africa, having a head-and-body length of 35–52
+      cm (14–20 in). Despite its name, only the soles of its feet are black or
+      dark brown. With its bold small spots and stripes on the tawny fur, it is
+      well camouflaged, especially on moonlit nights.
+    </Text>
+  </View>
+);
+
+
 const renderContent = () => (
   <>
     <View style={localStyles.panel}>
@@ -42,6 +59,14 @@ const renderContent = () => (
         style={localStyles.image}
       />
       <DescriptionAfricanCat />
+      <TouchableOpacity style={localStyles.panelButton}>
+        <Text style={localStyles.panelButtonTitle}>More</Text>
+      </TouchableOpacity>
+      <Image
+        source={require('../assets/images/Black-Footed_Cat.jpg')}
+        style={localStyles.image}
+      />
+      <DescriptionBlackFootedCat />
       <TouchableOpacity style={localStyles.panelButton}>
         <Text style={localStyles.panelButtonTitle}>More</Text>
       </TouchableOpacity>
@@ -136,7 +161,7 @@ export default class Home extends Component<Props, {}> {
             }
             title="Show modal sheet"
           />
-          <View style={{marginTop: 16}}>
+          <View style={{ height: 16 }} />
           <Button
             onPress={() =>
               RNNBottomSheet.openBottomSheet({
@@ -149,15 +174,44 @@ export default class Home extends Component<Props, {}> {
                 enabledContentGestureInteraction: true,
                 style: {
                   backgroundColor: 'white',
-                  width: "80%",
-                  height: "75%",
-                  borderRadius: 16
+                  width: '80%',
+                  height: '75%',
+                  borderRadius: 16,
                 },
               })
             }
             title="Show dialog"
           />
-          </View>
+          <View style={{ height: 16 }} />
+          <Button
+            onPress={() =>
+              RNNBottomSheet.openBottomSheet({
+                renderContent: FlatListContent,
+                renderHeader: renderHeader,
+                snapPoints: [0, '50%', '90%'],
+                borderRadius: 16,
+                style: {
+                  backgroundColor: 'white',
+                },
+              })
+            }
+            title="modal sheet with FlatList"
+          />
+          <View style={{ height: 16 }} />
+          <Button
+            onPress={() =>
+              RNNBottomSheet.openBottomSheet({
+                renderContent: SectionListContent,
+                renderHeader: renderHeader,
+                snapPoints: [0, '50%', '90%'],
+                borderRadius: 16,
+                style: {
+                  backgroundColor: 'white',
+                },
+              })
+            }
+            title="modal sheet with SectionList"
+          />
         </View>
       </>
     );
@@ -199,9 +253,10 @@ const localStyles = StyleSheet.create({
     backgroundColor: colors.green,
   },
   image: {
+    alignSelf: 'center',
     marginVertical: 10,
     alignItems: 'center',
-    width: 300,
+    width: '100%',
     height: 200,
     borderRadius: 6,
   },

@@ -148,16 +148,16 @@ Returns a name of the component that is used when calling registerComponent() me
 
 Returns a boolean indicating whether the bottom sheet is opened or not.
 
-## :warning: Take into account.
+## :warning: Take into account
 
-I developed and tested the component primarily on android devices and even though, theoretically, it should also work on IOS, I can't test it and thus vouch that it will function the same way.
+I developed and tested the component primarily on Android devices and even though, theoretically, it should also work on iOS, I can't test it and thus vouch that it will function the same way.
 
 ## :clipboard: Roadmap
 
 The project is still in development and here's a list of features / fixes i am planning to address:
 
 - [x] add decay animation for scrolling (29.08.2021)
-- [ ] add support for FlatList and SectionList (wrapper around these functions)
+- [ ] add better support for FlatList and SectionList (for now there are only wrappers)
 - [ ] add more options for customization
 - [ ] add an option to automatically adjust bottom sheet height based on scrolling content
 - [ ] add an option to dynamically change opacity of the bottom sheet

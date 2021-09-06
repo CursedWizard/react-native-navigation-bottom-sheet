@@ -14,7 +14,9 @@
     "react-native": "0.63.4",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-navigation": "^7.18.1",
-    "react-native-reanimated": "^1.13.2"
+    "react-native-paper": "^4.9.2",
+    "react-native-reanimated": "^1.13.2",
+    "react-native-ui-lib": "^5.30.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
