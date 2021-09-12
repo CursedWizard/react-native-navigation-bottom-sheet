@@ -52,6 +52,16 @@ const {
   onChange,
 } = Animated;
 
+const {
+  interpolate: interpolateDeprecated,
+  // @ts-ignore: this property is only present in Reanimated 2
+  interpolateNode,
+} = Animated;
+
+// @ts-ignore
+const interpolate: typeof interpolateDeprecated =
+  interpolateNode ?? interpolateDeprecated;
+
 const screenHeight = Dimensions.get('window').height;
 
 type Props = RNNBottomSheetProps & { componentId: any };
@@ -146,8 +156,8 @@ class BottomSheet extends React.Component<Props, State> {
   /* Opacity of the view outside of the bottom sheet */
   _masterOpacity: Animated.Node<number>;
 
-  /* Dragging animation for bottom sheet, calculated as offset + dragging value */
-  _draggingAnimation = Animated.interpolate(
+  /* @ts-ignore Dragging animation for bottom sheet, calculated as offset + dragging value */
+  _draggingAnimation = interpolate(
     Animated.add(
       Animated.sub(screenHeight, this._lastBottomSheetHeight),
       add(this._dragY, ASBS._scrollToDragVal)
@@ -461,7 +471,8 @@ class BottomSheet extends React.Component<Props, State> {
       ),
     ]);
 
-    this._masterOpacity = Animated.interpolate(this._masterTranslateY, {
+    // @ts-ignore
+    this._masterOpacity = interpolate(this._masterTranslateY, {
       inputRange: [
         screenHeight - this.snapPoints[this.snapPoints.length - 1],
         screenHeight - this.snapPoints[0],
