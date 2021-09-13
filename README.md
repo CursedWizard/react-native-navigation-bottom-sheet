@@ -17,26 +17,24 @@ To replicate the behavior of the bottom sheet as showcased in gifs above check o
 
 ## 📦 Installation
 
-If you are using npm:
+Below I listed commands using yarn but you also can use npm to install the package.
 
 ```sh
-npm install react-native-navigation-bottom-sheet 
+yarn add react-native-navigation-bottom-sheet
 ```
 
-If you are using yarn:
+You also need to install `react-native-gesture-handler` and `react-native-reanimated`
+dependecies. Since the latest release (1.3.0) the bottom sheet is compatible with
+both versions of `react-native-reanimated` library. If you are developing for Android
+and don't want to do any additional configuration besides installing the package, you you might want to install version 1. For more info on installation of reanimated version 2 check out their [official documentation](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/installation).
 
-```sh
-yarn add react-native-navigation-bottom-sheet 
-```
-
-Then you need to install dependecies:
-
-```sh
-npm install react-native-gesture-handler react-native-reanimated@1.13.2
-```
-
+Reanimated version 1:
 ```sh
 yarn add react-native-gesture-handler react-native-reanimated@1.13.2
+```
+Reanimated version 2 (latest version):
+```sh
+yarn add react-native-gesture-handler react-native-reanimated
 ```
 
 ## 🚀 Usage
@@ -173,4 +171,3 @@ Don't hesitate to file an issue about any kind of malfunction you experienced. Y
 ## :book: License
 
 MIT
-
