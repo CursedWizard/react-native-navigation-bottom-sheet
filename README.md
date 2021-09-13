@@ -26,7 +26,7 @@ yarn add react-native-navigation-bottom-sheet
 You also need to install `react-native-gesture-handler` and `react-native-reanimated`
 dependecies. Since the latest release (1.3.0) the bottom sheet is compatible with
 both versions of `react-native-reanimated` library. If you are developing for Android
-and don't want to do any additional configuration besides installing the package, you you might want to install version 1. For more info on installation of reanimated version 2 check out their [official documentation](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/installation).
+and don't want to do any additional configuration besides installing the package, you might want to install version 1. For more info on installation of reanimated version 2 check out their [official documentation](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/installation).
 
 Reanimated version 1:
 ```sh
