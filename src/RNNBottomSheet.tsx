@@ -8,6 +8,8 @@ import { listen, dispatch } from './events';
 import type { RNNBottomSheetProps } from './types';
 
 import BottomSheet from './BottomSheet';
+import type { ComponentProvider } from 'react-native';
+
 const notInitialized = 'You have not initialized RNNBottomSheet component.';
 const openedInstance =
   'You already have running instance of the component. Aborting...';
@@ -25,17 +27,24 @@ export default class RNNBottomSheet {
     return this.modalOpened;
   }
 
-  static init() {
+  static init(
+    registerWithProvider: (
+      name: string,
+      bottomSheet: typeof BottomSheet
+    ) => ComponentProvider
+  ) {
     if (!this.registered) {
-      console.log("Registering bottom sheet");
-      Navigation.registerComponent(this.bottomSheetName, () => BottomSheet);
+      console.log('===> Registering bottom sheet');
+
+      registerWithProvider
+        ? registerWithProvider(this.bottomSheetName, BottomSheet)
+        : Navigation.registerComponent(this.bottomSheetName, () => BottomSheet);
       this.registered = true;
 
       listen('MARK_CLOSED', () => {
         this.modalOpened = false;
       });
     }
-
   }
 
   /**
@@ -74,6 +83,7 @@ export default class RNNBottomSheet {
           },
           layout: {
             backgroundColor: 'transparent',
+            componentBackgroundColor: 'transparent',
           },
           hardwareBackButton: {
             dismissModalOnPress: false,
@@ -100,4 +110,3 @@ export default class RNNBottomSheet {
     dispatch('DISMISS_BOTTOM_SHEET');
   }
 }
-
