@@ -5,13 +5,13 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "ios": "react-native run-ios --simulator",
+    "ios": "react-native run-ios",
     "watchman-clear": "watchman watch-del-all",
-    "start": "yarn watchman-clear && react-native start"
+    "start": "react-native start"
   },
   "dependencies": {
-    "react": "16.13.1",
-    "react-native": "0.63.4",
+    "react": "17.0.2",
+    "react-native": "0.66.3",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-navigation": "^7.18.1",
     "react-native-paper": "^4.9.2",
@@ -22,7 +22,7 @@
     "@babel/core": "^7.12.10",
     "@babel/runtime": "^7.12.5",
     "@types/react": "^17.0.0",
-    "@types/react-native": "^0.63.37",
+    "@types/react-native": "^0.66.4",
     "babel-plugin-module-resolver": "^4.0.0",
     "metro-react-native-babel-preset": "^0.64.0",
     "typescript": "^3.8.3"

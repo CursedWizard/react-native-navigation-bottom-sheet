@@ -167,7 +167,7 @@ export default class Home extends Component<Props, {}> {
               RNNBottomSheet.openBottomSheet({
                 renderContent: renderDialogContent,
                 // renderHeader: renderHeader,
-                snapPoints: [0, '90%'],
+                snapPoints: [0, '80%'],
                 borderRadius: 16,
 
                 onChange: (index: number) => console.log(index),
@@ -175,7 +175,7 @@ export default class Home extends Component<Props, {}> {
                 style: {
                   backgroundColor: 'white',
                   width: '80%',
-                  height: '75%',
+                  height: 450,
                   borderRadius: 16,
                 },
               })
@@ -225,12 +225,6 @@ const localStyles = StyleSheet.create({
     padding: 20,
     backgroundColor: 'white',
     paddingTop: 20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 5,
-    shadowOpacity: 0.4,
   },
   dialogButton: {
     width: 180,

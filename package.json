@@ -68,8 +68,8 @@
     "react": "*",
     "react-native": "*",
     "react-native-gesture-handler": "*",
-    "react-native-reanimated": "*",
-    "react-native-navigation": ">=6.5.0"
+    "react-native-navigation": ">=6.5.0",
+    "react-native-reanimated": "*"
   },
   "jest": {
     "preset": "react-native",
@@ -147,5 +147,7 @@
       ]
     ]
   },
-  "dependencies": {}
+  "dependencies": {
+    "react-native-navigation": "^7.23.1-hotfix.1"
+  }
 }

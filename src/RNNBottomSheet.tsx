@@ -89,7 +89,6 @@ export default class RNNBottomSheet {
             dismissModalOnPress: false,
           },
           modal: {
-            // IOS specific  TODO: test it
             swipeToDismiss: false,
           },
           popGesture: false,

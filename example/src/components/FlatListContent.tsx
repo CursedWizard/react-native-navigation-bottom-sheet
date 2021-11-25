@@ -4,7 +4,7 @@ import { Card, Title, Paragraph, TouchableRipple, Text } from 'react-native-pape
 import { FlatList, SectionList } from 'react-native-navigation-bottom-sheet';
 // import { Card } from 'react-native-ui-lib';
 
-const DATA: any = [];
+const DATA: any[] = [];
 
 for (let i = 0; i < 16; i++) {
   DATA.push({
@@ -25,7 +25,7 @@ const Item = ({ item }: any) => (
 
 const FlatListContent = () => (
   <View style={{ padding: 16 }}>
-    <FlatList data={DATA} renderItem={Item} />
+    {DATA.map((item, index) => <Item key={index} item={item} />)}
   </View>
 );
 const sectionData = [
