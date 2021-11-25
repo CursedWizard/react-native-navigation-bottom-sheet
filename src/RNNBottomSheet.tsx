@@ -28,7 +28,7 @@ export default class RNNBottomSheet {
   }
 
   static init(
-    registerWithProvider: (
+    registerWithProvider?: (
       name: string,
       bottomSheet: typeof BottomSheet
     ) => ComponentProvider

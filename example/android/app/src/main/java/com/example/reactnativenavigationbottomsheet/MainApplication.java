@@ -53,7 +53,7 @@ public class MainApplication extends NavigationApplication {
   @Override
   public void onCreate() {
     super.onCreate();
-    // SoLoader.init(this, /* native exopackage */ false);
+    // 
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
   }
 
