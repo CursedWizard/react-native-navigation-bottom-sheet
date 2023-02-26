@@ -2,6 +2,7 @@ import {
   Navigation,
   Layout,
   OptionsModalPresentationStyle,
+  Options,
 } from 'react-native-navigation';
 
 import { listen, dispatch } from './events';
@@ -13,6 +14,8 @@ import type { ComponentProvider } from 'react-native';
 const notInitialized = 'You have not initialized RNNBottomSheet component.';
 const openedInstance =
   'You already have running instance of the component. Aborting...';
+
+export type { RNNBottomSheetProps }
 
 export default class RNNBottomSheet {
   private static modalOpened = false;
@@ -55,7 +58,7 @@ export default class RNNBottomSheet {
     dispatch('BOTTOM_SHEET_SNAP_TO', index);
   }
 
-  static openBottomSheet(props: RNNBottomSheetProps) {
+  static openBottomSheet(props: RNNBottomSheetProps, options?: Options) {
     if (!this.registered) {
       console.error(notInitialized);
       return;
@@ -94,7 +97,8 @@ export default class RNNBottomSheet {
           popGesture: false,
           modalPresentationStyle:
             'overCurrentContext' as OptionsModalPresentationStyle,
-        },
+          ...options
+        },        
       },
     };
     Navigation.showModal(layout);
