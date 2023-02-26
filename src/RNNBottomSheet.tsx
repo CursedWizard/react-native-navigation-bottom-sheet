@@ -97,8 +97,8 @@ export default class RNNBottomSheet {
           popGesture: false,
           modalPresentationStyle:
             'overCurrentContext' as OptionsModalPresentationStyle,
-        },
-        ...options
+          ...options
+        },        
       },
     };
     Navigation.showModal(layout);
