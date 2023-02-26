@@ -2,6 +2,7 @@ import {
   Navigation,
   Layout,
   OptionsModalPresentationStyle,
+  Options,
 } from 'react-native-navigation';
 
 import { listen, dispatch } from './events';
@@ -55,7 +56,7 @@ export default class RNNBottomSheet {
     dispatch('BOTTOM_SHEET_SNAP_TO', index);
   }
 
-  static openBottomSheet(props: RNNBottomSheetProps) {
+  static openBottomSheet(props: RNNBottomSheetProps, options?: Options) {
     if (!this.registered) {
       console.error(notInitialized);
       return;
@@ -95,6 +96,7 @@ export default class RNNBottomSheet {
           modalPresentationStyle:
             'overCurrentContext' as OptionsModalPresentationStyle,
         },
+        ...options
       },
     };
     Navigation.showModal(layout);
