@@ -15,6 +15,8 @@ const notInitialized = 'You have not initialized RNNBottomSheet component.';
 const openedInstance =
   'You already have running instance of the component. Aborting...';
 
+export type { RNNBottomSheetProps }
+
 export default class RNNBottomSheet {
   private static modalOpened = false;
   private static registered = false;
